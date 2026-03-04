@@ -47,7 +47,8 @@
 
 ### Git State
 - Branch: `main`
-- Latest commits:
+- Latest commits (newest first):
+  - `cace82b` docs: context dump for research skill v2 session — post-mortem included
   - `04ada82` feat: first v2 research output — best free MCP servers for Claude Code
   - `5b4a3a9` feat: upgrade /research skill to v2 — dynamic agents, inline citations, speed improvements
   - `e631076` feat: first /research output — Claude Code agentic workflow best practices
@@ -58,9 +59,12 @@
 |------|--------|
 | `.claude/skills/research/SKILL.md` | Rewritten (v1 → v2) |
 | `.claude/settings.local.json` | Added `WebFetch` to allowed tools (gitignored) |
+| `.claude/claude.md` | Added session wind-down rule |
 | `research/2026-03-04_best-free-mcp-servers-claude-code-reddit-web.md` | Created (v2 test output) |
+| `context_dumps/002_research_skill_v2.md` | Created (this file) |
 
 ### Key Decisions / Preferences Learned
 - Nate wants research agents to run without permission prompts — auto-allow WebSearch + WebFetch
 - Nate evaluates tools on real output quality, not just spec compliance
 - "What went wrong and what went right" is the review Nate wants after test runs — honest post-mortem, not cheerleading
+- When session is ending: always summarize, context dump, commit, and push — so the next agent can pick up seamlessly
