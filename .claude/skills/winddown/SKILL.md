@@ -1,12 +1,12 @@
 ---
-name: context
+name: winddown
 description: Automates session wind-down — gathers git state, conversation context, and writes a structured context dump. Commits and pushes automatically.
 argument-hint: "[session description]"
 ---
 
 # Context Dump Skill
 
-You have been invoked as `/context`. Your job is to create a structured context dump capturing the current session's work, commit it, and push to GitHub so the next agent can pick up seamlessly.
+You have been invoked as `/winddown`. Your job is to create a structured context dump capturing the current session's work, commit it, and push to GitHub so the next agent can pick up seamlessly.
 
 ## Step 1: Get Session Description
 
@@ -113,3 +113,11 @@ Print a summary in chat:
 - Git log and diff are the source of truth for what happened
 - If git push fails, report the error — don't silently skip it
 - The context dump should be detailed enough that a fresh agent with zero prior context can understand what happened and what to do next
+- Never commit `.env` or gitignored files
+- Use today's actual date
+- 3-digit zero-padded numbers (001, 002, etc.)
+
+## Changelog
+
+- **2026-03-04**: Updated commit strategy from single commit to two-commit approach — uncommitted work gets its own `wip:` commit before the `docs:` context dump commit. Rationale: keeps real work and session bookkeeping separate in git history.
+- **2026-03-04**: Renamed from `/context` to `/winddown` — `/context` collides with a built-in Claude Code command that visualizes context usage. Hyphenated name `/wind-down` also failed ("unknown skill"), so went with no hyphen.
