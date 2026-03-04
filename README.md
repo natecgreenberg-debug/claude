@@ -1,9 +1,9 @@
 # Agent
 
-AI-powered workspace for building revenue-generating side hustles through automation, content, and agentic workflows.
+AI-powered workspace for exploring side hustle ideas through automation, content, and agentic workflows.
 
 ## What This Is
-A sandbox environment running on a Hostinger VPS (Ubuntu 24.04) behind Tailscale, powered by Claude Code. This workspace is the command center for:
+A sandbox environment running on a Hostinger VPS (Ubuntu 24.04) behind Tailscale, powered by Claude Code. Areas being explored include:
 
 - **Affiliate Marketing** — AI-generated reviews, comparisons, and content funnels
 - **Content Creation** — Automated content pipelines for blogs, newsletters, and social

@@ -63,7 +63,8 @@
 - **research**: Deep research using Sonnet, returns concise summaries, keeps expensive work out of parent context
 - **code-reviewer**: Zero-context code review, objective and unbiased, returns only specific actionable changes
 
-## Revenue Streams & Strategy
+## Areas of Interest (Exploring)
+These are brainstorming ideas and directions Nate is interested in — not a locked-in plan:
 1. **Affiliate Marketing**: Product reviews, comparison content, niche sites (ClickBank, Amazon)
 2. **Content Creation**: AI-assisted content pipelines, newsletters, social media
 3. **Digital Products**: Templates, courses, ebooks, micro-tools
