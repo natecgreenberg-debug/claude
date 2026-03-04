@@ -10,13 +10,14 @@
 - Will provide business documents for additional context over time
 
 ## How We Work Together
+- **ALWAYS push to GitHub after every commit. No exceptions.** Do not batch commits without pushing. Every `git commit` must be followed by `git push` before moving on to the next task.
 - **Plan → Build → Verify** — always follow this loop
 - **Planning is sacred**: Ask questions until 99% confident, then propose a plan, get approval, *then* build
 - **NEVER auto-proceed on plans** — always present the plan and wait for Nate's explicit approval before building. No exceptions.
 - Don't explain unless Nate asks — just do the work efficiently
 - When something breaks, Nate describes the problem, I debug and fix
 - Nate does both long deep sessions and quick bouncing between ideas
-- Commit to git regularly with descriptive messages and **always push to GitHub** after making changes
+- Commit to git regularly with descriptive messages
 - When Nate makes a correction or shares a helpful note, ask if he wants it added to this `claude.md` file
 - When context gets high, proactively compact
 - **Session wind-down**: When Nate signals a session is ending (or context is critically high), always: (1) summarize what was done + what's next, (2) write/update a context dump in `context_dumps/`, (3) commit all changes and push to GitHub. The next agent should be able to pick up exactly where we left off.

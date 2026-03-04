@@ -218,3 +218,4 @@ For multi-topic batches, print summaries for all topics.
 - If a topic is ambiguous, state your interpretation and proceed
 - For `--quick` mode: always 2 agents, skip the complexity assessment
 - If an agent returns an error or empty response, proceed with the agents that did return. Document the missing coverage in the "Contradictions & Gaps" section with: "Agent [{focus area}] did not return results — this area has no coverage."
+- ALWAYS `git push` immediately after every commit — never leave unpushed commits

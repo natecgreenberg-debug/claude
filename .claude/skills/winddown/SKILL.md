@@ -116,6 +116,7 @@ Print a summary in chat:
 - Never commit `.env` or gitignored files
 - Use today's actual date
 - 3-digit zero-padded numbers (001, 002, etc.)
+- ALWAYS `git push` immediately after every commit — never leave unpushed commits
 
 ## Changelog
 
