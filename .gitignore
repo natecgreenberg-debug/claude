@@ -1,0 +1,42 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data & Cache
+*.db
+*.sqlite3
+*.csv
+*.json.bak
+.cache/
+
+# Node (if needed for tooling)
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+logs/
