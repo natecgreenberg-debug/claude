@@ -25,18 +25,17 @@
 - **OS**: Ubuntu 24.04 on Hostinger VPS
 - **Access**: Tailscale only (IP: 100.114.8.49), firewall drops everything else
 - **IDE**: Antigravity (VS Code fork) + Claude Code via Remote SSH
-- **Docker**: Installed, n8n running at `http://100.114.8.49:5678`
+- **Docker**: Installed, n8n running on port 5678
 - **GitHub**: SSH configured, user `natecgreenberg-debug`
 - **Python**: 3.12.3 — always use virtual environments for projects
 - **Workspace root**: `~/projects/Agent/`
 
 ## API & Integrations
-- **n8n**: `http://100.114.8.49:5678` — workflow automation hub
+- **n8n**: port 5678 (see Environment above) — workflow automation hub
 - **AI APIs**: OpenRouter (multi-model access), fal.ai, WaveSpeed, kie.ai
 - **Affiliate**: ClickBank, Amazon Associates
 - **Payments**: Stripe
 - **Design**: Canva
-- **Upcoming**: Gemini API (500 free tickets), more as needed
 - API keys stored in `.env` files (never committed to git)
 
 ## Code Standards
@@ -71,5 +70,3 @@ These are brainstorming ideas and directions Nate is interested in — not a loc
 3. **Digital Products**: Templates, courses, ebooks, micro-tools
 4. **Agency Services**: Offer AI-powered automation services to clients
 
-## First Priority
-Extensive parallel research using sub-agents — Nate will brief on specifics after workspace setup.

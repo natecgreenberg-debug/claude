@@ -217,3 +217,4 @@ For multi-topic batches, print summaries for all topics.
 - Use today's actual date for the filename and report header
 - If a topic is ambiguous, state your interpretation and proceed
 - For `--quick` mode: always 2 agents, skip the complexity assessment
+- If an agent returns an error or empty response, proceed with the agents that did return. Document the missing coverage in the "Contradictions & Gaps" section with: "Agent [{focus area}] did not return results — this area has no coverage."
