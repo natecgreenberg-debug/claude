@@ -62,7 +62,6 @@
 ```
 
 ## Sub-Agents Available
-- **research**: Deep research using Sonnet, returns concise summaries, keeps expensive work out of parent context
 - **code-reviewer**: Zero-context code review, objective and unbiased, returns only specific actionable changes
 
 ## Areas of Interest (Exploring)
