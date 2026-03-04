@@ -15,7 +15,8 @@
 - Don't explain unless Nate asks — just do the work efficiently
 - When something breaks, Nate describes the problem, I debug and fix
 - Nate does both long deep sessions and quick bouncing between ideas
-- Commit to git regularly with descriptive messages
+- Commit to git regularly with descriptive messages and **always push to GitHub** after making changes
+- When Nate makes a correction or shares a helpful note, ask if he wants it added to this `claude.md` file
 - When context gets high, proactively compact
 
 ## Environment
