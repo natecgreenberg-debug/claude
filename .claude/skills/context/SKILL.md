@@ -82,10 +82,15 @@ Write the file to `~/projects/Agent/context_dumps/{NNN}_{slug}.md` using this te
 
 ## Step 5: Auto-Commit and Push
 
-1. Stage the new context dump file: `git add context_dumps/{filename}`
-2. Also stage any other uncommitted changes: review `git status` and stage relevant files (skip `.env` and secrets)
-3. Commit with message: `docs: context dump {NNN} — {slug}`
-4. Push to GitHub: `git push`
+Two separate commits if there are uncommitted changes:
+
+1. **First commit (if needed)**: Check `git status` for uncommitted changes. If any exist:
+   - Stage all relevant files (skip `.env`, secrets, and gitignored files)
+   - Commit with message: `wip: uncommitted changes before context dump {NNN}`
+2. **Second commit**: Stage the new context dump file:
+   - `git add context_dumps/{filename}`
+   - Commit with message: `docs: context dump {NNN} — {slug}`
+3. **Push**: `git push`
 
 ## Step 6: Print Confirmation
 
