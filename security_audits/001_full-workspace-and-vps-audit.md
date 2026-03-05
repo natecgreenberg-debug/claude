@@ -1,31 +1,49 @@
 # Security & Workspace Audit — 2026-03-04
 
-## 1. VPS Security — 3 CRITICAL Issues
+## 1. VPS Security
+
+### External Firewall (Hostinger Control Panel)
+
+**The VPS is protected by Hostinger's network-level firewall.** This was confirmed on 2026-03-05 by reviewing the Hostinger control panel. Rules:
+
+| Action | Protocol | Port | Source IP | Dest IP |
+|--------|----------|------|-----------|---------|
+| **ACCEPT** | UDP | 41641 | any | any |
+| **DROP** | any | any | any | any |
+
+- **UDP 41641** is Tailscale's WireGuard port — the only traffic allowed through
+- **Everything else is dropped** at the network level before reaching the VPS
+- SSH (port 22) is **NOT reachable** from the public internet
+- The public IP `187.77.218.185` is effectively locked down — only Tailscale peers can connect
+
+This means the on-server SSH findings below are **defense-in-depth recommendations, not urgent vulnerabilities**.
+
+### On-Server Findings
 
 | Severity | Finding | Details |
 |----------|---------|---------|
-| **CRITICAL** | SSH password auth is ON | `/etc/ssh/sshd_config.d/50-cloud-init.conf` sets `PasswordAuthentication yes` and wins over `60-cloudimg-settings.conf` that tries to set `no` (sshd uses first match) |
-| **CRITICAL** | Root login allowed | `PermitRootLogin yes` in sshd_config — anyone can attempt root password login |
-| **CRITICAL** | No brute-force protection | fail2ban is not installed. No crowdsec or sshguard either |
-| **WARNING** | Firewall is OFF | UFW is inactive. iptables rules are only from Tailscale/Docker. SSH port 22 is exposed on public IP `187.77.218.185` |
-| **WARNING** | `~/.claude/` is world-readable | Directory is 755 — credentials file inside is 600 (good) but directory listing is visible |
+| **LOW** | SSH password auth is ON | `/etc/ssh/sshd_config.d/50-cloud-init.conf` sets `PasswordAuthentication yes` — mitigated by Hostinger firewall blocking port 22 from public internet |
+| **LOW** | Root login allowed | `PermitRootLogin yes` in sshd_config — mitigated by firewall, only Tailscale peers can reach SSH |
+| **LOW** | No brute-force protection | fail2ban not installed — low risk since SSH isn't publicly reachable |
+| **INFO** | UFW inactive | On-server firewall is off, but Hostinger's network firewall handles this. UFW would be a redundant backup layer |
+| **LOW** | `~/.claude/` is world-readable | Directory is 755 — credentials file inside is 600 (good) but directory listing is visible to other local users |
 | **OK** | n8n bound to localhost only | Port 5678 not exposed publicly |
-| **OK** | Tailscale working | Two devices connected, direct connection |
+| **OK** | Tailscale working | Two devices connected (VPS + MacBook), direct connection |
 | **OK** | Auto security updates enabled | unattended-upgrades running |
 | **OK** | Disk: 6.3G of 96G used (7%) | Plenty of space |
 | **OK** | Docker daemon not exposed | No remote API, n8n on localhost only |
 | **OK** | No unexpected users | Only root, ubuntu (default), sync (system) |
 | **OK** | No suspicious cron jobs | Standard Ubuntu entries only |
 
-### Priority Remediation
+### Defense-in-Depth Recommendations (Not Urgent)
 
-1. **Fix SSH password auth** — edit or remove `/etc/ssh/sshd_config.d/50-cloud-init.conf`, set `PasswordAuthentication no`, then `systemctl restart ssh`
-2. **Set `PermitRootLogin prohibit-password`** in `/etc/ssh/sshd_config` (line 130), then restart SSH
-3. **Install fail2ban** — `apt install fail2ban` and enable the sshd jail
-4. **Enable UFW** — `ufw allow from 100.64.0.0/10` then `ufw enable` (allow Tailscale range first so you don't lock yourself out)
-5. **chmod 700 ~/.claude/** — minor but good practice
+These are all nice-to-haves since Hostinger's firewall is the primary protection:
 
-**Bottom line**: SSH is exposed to the public internet with password auth enabled and no brute-force protection. Most urgent thing to fix.
+1. **Disable SSH password auth** — edit `/etc/ssh/sshd_config.d/50-cloud-init.conf`, set `PasswordAuthentication no`, restart SSH
+2. **Set `PermitRootLogin prohibit-password`** in `/etc/ssh/sshd_config`
+3. **Install fail2ban** — extra safety net
+4. **Enable UFW** — redundant backup to Hostinger firewall (`ufw allow from 100.64.0.0/10` then `ufw enable`)
+5. **chmod 700 ~/.claude/** — minor, good practice
 
 ---
 
@@ -79,7 +97,7 @@
 5. **Context7 MCP** for real-time library/API documentation access
 
 ### Priority Recommendation
-Fix VPS security first (SSH hardening), then MCP server install (config is already written).
+MCP server install is highest priority next step (config is already written). VPS SSH hardening is defense-in-depth, not urgent.
 
 ---
 
