@@ -109,6 +109,10 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Never use `rm -rf` during autonomous runs. Use targeted `rm` on specific files when needed.
 - If a package install is needed, log it as a human action item and skip
 
+**Plan decisions override sub-skill prompts:**
+- When executing an approved plan, decisions already specified in the plan take precedence over interactive prompts in sub-skills (e.g., if the plan says "overwrite", do not ask the user whether to overwrite or append)
+- Only pause for genuinely unexpected situations not covered by the plan
+
 **Never do things that need human judgment:**
 - Do NOT create or comment on GitHub issues/PRs
 - Do NOT send messages to external services (Slack, email, webhooks)
@@ -220,3 +224,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 ## Changelog
 - **2026-03-05**: Initial version
 - **2026-03-05**: Review fixes — compact fallback, checkpoint heuristic, guardrail tightening, subfolder structure, AskUserQuestion for approval
+- **2026-03-05**: Added "plan decisions override sub-skill prompts" guardrail to prevent unnecessary user prompts during autonomous execution
