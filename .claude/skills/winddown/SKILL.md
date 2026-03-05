@@ -113,7 +113,30 @@ Create a handoff file for the next session's `/startsession` skill.
 - `path/to/file` — why it's relevant
 ```
 
-## Step 6: Auto-Commit and Push
+## Step 6: Update MEMORY.md
+
+Read `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` and check whether this session produced any durable learnings that should be persisted. Update the file if needed.
+
+**What counts as a durable learning (save it):**
+- New or changed user preferences / workflow corrections
+- Tool or skill status changes (tested, broken, fixed, new capabilities)
+- Architectural decisions or project structure changes
+- Solutions to problems that will recur
+- New backlogs, important file pointers, or project state the next session needs
+
+**What does NOT belong in MEMORY.md (skip it):**
+- Session-specific details already captured in the context dump
+- Temporary task status or in-progress work
+- Anything that duplicates what's already in MEMORY.md
+- Speculative conclusions from a single observation
+
+**How to update:**
+- Read the current MEMORY.md first
+- Update existing sections rather than adding new ones when possible
+- Keep it concise — MEMORY.md is always loaded into context, so every line costs tokens
+- If nothing new needs saving, skip this step entirely
+
+## Step 7: Auto-Commit and Push
 
 Two separate commits if there are uncommitted changes:
 
@@ -125,7 +148,7 @@ Two separate commits if there are uncommitted changes:
    - Commit with message: `docs: context dump {NNN} — {slug}`
 3. **Push**: `git push`
 
-## Step 7: Print Confirmation
+## Step 8: Print Confirmation
 
 Print a summary in chat:
 
@@ -156,3 +179,4 @@ Print a summary in chat:
 - **2026-03-04**: Updated commit strategy from single commit to two-commit approach — uncommitted work gets its own `wip:` commit before the `docs:` context dump commit. Rationale: keeps real work and session bookkeeping separate in git history.
 - **2026-03-04**: Renamed from `/context` to `/winddown` — `/context` collides with a built-in Claude Code command that visualizes context usage. Hyphenated name `/wind-down` also failed ("unknown skill"), so went with no hyphen.
 - **2026-03-05**: Added Step 5 (Generate Handoff File) — writes `handoff.md` for `/startsession` to consume. Flags restart-dependent changes (new skills, hooks, config). Old Steps 5-6 became Steps 6-7.
+- **2026-03-05**: Added Step 6 (Update MEMORY.md) — persists durable learnings (preferences, skill status, architecture decisions) so they survive across sessions. Old Steps 6-7 became Steps 7-8.
