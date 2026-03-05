@@ -4,6 +4,14 @@
 **Status**: Implementation complete, needs live testing in a fresh session
 **Delete this file**: After all tests pass
 
+## Instructions for Next Agent
+
+You are picking up where a previous session left off. A PreToolUse hook was implemented to protect against dangerous commands. The hook is now active (settings were changed before this session started). Your job is to **run the test plan below** to verify it works.
+
+**Start with Round 1, Test 1.** Run each test one at a time in order. Report results as you go. Do NOT skip ahead. If any test in Round 1 fails (command runs without prompting), STOP and troubleshoot before continuing.
+
+**CRITICAL SAFETY NOTE**: Every test command in this file is intentionally harmless. Do NOT substitute your own commands. Do NOT run `apt install`, `apt update`, `rm -rf /`, or any other actually dangerous command. The test commands are designed so that even if the hook completely fails and the command executes unprotected, nothing bad happens.
+
 ---
 
 ## What This Project Is
