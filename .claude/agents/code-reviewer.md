@@ -1,7 +1,7 @@
 ---
 name: Code Reviewer
 description: Zero-context code review agent. Reviews code with no prior knowledge to eliminate bias. Returns only specific, actionable changes needed.
-model: sonnet-4-5
+model: sonnet-4-6
 ---
 
 # Code Reviewer Agent

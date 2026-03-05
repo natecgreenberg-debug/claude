@@ -1,3 +1,5 @@
+**Note: Always reference the most recent (highest-numbered) security audit for current status.**
+
 # Security & Workspace Audit — 2026-03-04
 
 ## 1. VPS Security
