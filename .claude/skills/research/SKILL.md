@@ -58,7 +58,7 @@ Examples of custom agent designs (these are illustrations, not templates to copy
 
 ## Step 3: Spawn Parallel Research Agents
 
-Launch ALL agents for ALL topics in a **single message** so they run concurrently. Use `subagent_type: "Research Agent"` and `model: "sonnet"` for each agent.
+Launch ALL agents for ALL topics in a **single message** so they run concurrently. Use `subagent_type: "general-purpose"` for each agent.
 
 ### Agent Brief Template
 
@@ -87,17 +87,15 @@ Return your findings using this exact structure:
 ### Key Findings
 [Your synthesized findings. EVERY factual claim must have an inline citation tag.]
 
-Citation format — use these tags on every claim:
-- [Official Docs: site/page] — vendor/official documentation
-- [Verified: Source1 + Source2] — 2+ independent sources confirm the same claim
-- [Blog: author/site] — single authoritative article
-- [Community: platform] — Reddit, HN, forums
-- [Unverified: source] — single source, not cross-checked
+Citation format — tag every paragraph with one citation at the end:
+- [Official Docs: site/page, YYYY] — vendor/official documentation
+- [Verified: Source1 + Source2, YYYY] — 2+ independent sources confirm the same claim
+- [Blog: author/site, YYYY] — single authoritative article
+- [Community: platform, YYYY] — Reddit, HN, forums
 
-For factual claims (specs, pricing, config): tag per sentence.
-For opinions/strategies/recommendations: tag per paragraph.
+Include the year in every citation tag. If no date is visible on the source, omit the year from that citation.
 
-Freshness: note the year/date of each source when visible (e.g., "as of Jan 2026 [Blog: example.com]").
+Do not cite your own inferences or analysis — only cite sourced claims. Unsourced analysis is fine but should not have citation tags.
 
 ### Source Quality
 - Total sources found: {N}
@@ -108,6 +106,8 @@ Freshness: note the year/date of each source when visible (e.g., "as of Jan 2026
 ### Facts vs. Opinions
 - **Facts observed**: [list concrete, verifiable facts found]
 - **Opinions/recommendations**: [list subjective takes, clearly marked as opinions]
+
+**You MUST return your output using the exact structure above. Do not add extra sections, skip sections, or restructure. Non-compliant output will be discarded.**
 ```
 
 ## Step 4: Consolidate Into Report (Parent Does This)
@@ -164,9 +164,6 @@ If no contradictions found, say so briefly.]
 
 ### Community
 - [Reddit, HN, forum threads, discussion posts]
-
-### Unverified
-- [Single-source claims that weren't cross-checked — flag for follow-up]
 ```
 
 **Section-level guidance:**
@@ -196,7 +193,7 @@ Agents dispatched: {count} ({brief focus list})
 **Top findings:**
 - [3-5 most important bullets with inline citations]
 
-**Source quality:** {X} official/verified, {Y} blog, {Z} community, {W} unverified
+**Source quality:** {X} official/verified, {Y} blog, {Z} community
 
 **Recommended next action:** [Single most valuable next step]
 ```
@@ -206,7 +203,6 @@ For multi-topic batches, print summaries for all topics.
 ## Rules
 
 - ALWAYS launch all agents in parallel (single message with multiple Agent tool calls)
-- ALWAYS use `model: "sonnet"` for research agents (faster, cheaper, still high quality)
 - Design agents fresh for each topic — no fixed agent menu
 - Each agent: max 2 WebFetch calls, prefer snippet extraction
 - Synthesize agent outputs — don't just concatenate them
