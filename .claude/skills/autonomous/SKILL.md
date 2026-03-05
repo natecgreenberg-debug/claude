@@ -14,11 +14,11 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
 
 1. Parse `$ARGUMENTS` as the initial brain dump / task description
 2. If files are referenced, read them for additional context
-3. Ask clarifying questions until you are 99% confident on:
+3. Ask all your clarifying questions in a single round — cover everything you need to be 99% confident on:
    - Scope (what's in, what's out)
    - Requirements (specific behaviors, formats, constraints)
    - Success criteria (how to know each task is done)
-4. No limit on Q&A rounds — keep asking until clear
+4. After Nate answers, produce the plan (Phase 2). Nate iterates on the *plan*, not the questions. He controls how many revision rounds happen by approving or requesting changes.
 5. Do NOT proceed to planning until you're confident
 
 ## Phase 2: Plan (interactive)
@@ -29,26 +29,28 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
    - **Dependencies** between tasks (what must happen in order)
    - **Known blockers** that will need human action (flagged early so Nate can unblock before leaving)
    - **Success criteria** for each task
-2. Present the plan to Nate for review
-3. Iterate on the plan if Nate wants changes — no limit on revision rounds
-4. Wait for explicit approval (e.g., "go", "approved", "do it", "ship it")
-5. Do NOT begin execution until approval is given
+2. Use `AskUserQuestion` to present the plan with these explicit options:
+   - **"Approve — start execution"**
+   - **"Revise — let's do another round"**
+3. Iterate on the plan if Nate chooses "Revise" — no limit on revision rounds
+4. Do NOT begin execution until Nate explicitly approves
 
 ## Phase 3: Prepare (automatic — after approval)
 
-### 3a: Determine Run Number
+### 3a: Determine Run Number and Create Subfolder
 
-Scan `~/projects/Agent/autonomous_runs/` for existing files. Files follow the pattern `{NNN}_*.md` (e.g., `001_plan.md`, `002_completion.md`).
+Scan `~/projects/Agent/autonomous_runs/` for existing numbered subfolders. Subfolders follow the pattern `{NNN}_{slug}/` (e.g., `001_research-skill/`, `002_auth-module/`).
 
-- Find the highest `NNN` prefix across all files
+- Find the highest `NNN` prefix across all subfolders
 - Increment by 1 for the new run
 - Pad to 3 digits (e.g., `003`)
+- Create a subfolder: `{NNN}_{slugified-description}/` (e.g., `003_deploy-pipeline/`)
 
-If no files exist, start at `001`.
+If no subfolders exist, start at `001`.
 
 ### 3b: Save the Plan
 
-Write the approved plan to `~/projects/Agent/autonomous_runs/{NNN}_plan.md` with this format:
+Write the approved plan to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.md` with this format:
 
 ```markdown
 # Autonomous Run {NNN} — Plan
@@ -76,8 +78,9 @@ This run follows the embedded guardrails in the /autonomous skill.
 ### 3c: Compact and Reload
 
 1. Use `/compact` to clear context
-2. After compacting, read back `~/projects/Agent/autonomous_runs/{NNN}_plan.md` to reload the execution plan
-3. Enter autonomous execution mode
+2. If `/compact` does not execute or context remains high afterward, write the progress checkpoint and continue working. Do not retry or loop on compaction.
+3. After compacting, read back `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.md` to reload the execution plan
+4. Enter autonomous execution mode
 
 ## Phase 4: Execute (autonomous — Nate is AFK)
 
@@ -85,9 +88,11 @@ This run follows the embedded guardrails in the /autonomous skill.
 
 - Execute tasks from the plan in order, respecting dependency chains
 - Commit after each meaningful chunk of work
-- Push after every commit
+- Push after every commit — push approval is implicitly granted by the approved plan
 - Follow all existing project rules (workflow.md, code-style.md)
+- The Phase 2 plan approval serves as blanket approval for all tasks in the plan. Do not pause for per-task approval — the approval rule in workflow.md is satisfied by Phase 2.
 - Use sub-agents for expensive operations (research, code review)
+- When spawning sub-agents, include the autonomy guardrails in their brief so they also avoid `~/.claude/`, `apt`, `rm -rf`, and external services
 
 ### Autonomy Guardrails
 
@@ -95,20 +100,20 @@ These rules prevent triggering permission prompts that would block unattended ex
 
 **Never access `~/.claude/` directly:**
 - Do NOT read, edit, grep, or glob inside `~/.claude/`
-- Do NOT search `/root` recursively (it will hit `~/.claude/` files)
+- Unsafe examples: `grep -r ... /root/`, `find /root/ ...`, reading or globbing inside `~/.claude/`
+- Safe examples: searching within `/root/projects/Agent/`, using Grep/Glob tools scoped to the project directory
 - If you need config info, check project memory files instead
 
 **Never run hook-triggering commands:**
 - No `apt` or `apt-get` (any subcommand)
-- No `rm -rf /` or `rm -rf ~/` (any path starting with `/` or `~`)
-- If a package or dangerous deletion is needed, log it as a human action item and skip
+- Never use `rm -rf` during autonomous runs. Use targeted `rm` on specific files when needed.
+- If a package install is needed, log it as a human action item and skip
 
 **Never do things that need human judgment:**
 - Do NOT create or comment on GitHub issues/PRs
 - Do NOT send messages to external services (Slack, email, webhooks)
 - Do NOT delete files outside the project directory
 - Do NOT modify system configuration files (`/etc/`, systemd units, cron)
-- Push approval IS implicitly granted by the approved plan — committing and pushing your work is expected
 
 **When stuck:**
 - Do NOT retry the same failing action in a loop
@@ -119,11 +124,12 @@ These rules prevent triggering permission prompts that would block unattended ex
 ### Context Management
 
 - Monitor context usage throughout execution
-- When context gets high (before it becomes critical):
-  1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_progress.md`
+- Write a checkpoint when you receive system warnings about context limits OR notice message compression happening. As a safety net, also checkpoint at least every 3 tasks. Always leave enough room to write a useful checkpoint.
+- Steps when checkpointing:
+  1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/progress.md`
   2. Use `/compact` to clear context
-  3. After compacting, read back both `{NNN}_plan.md` and `{NNN}_progress.md` to reload state
-- Always leave enough context to write a useful checkpoint before compacting
+  3. If `/compact` does not execute or context remains high afterward, write the progress checkpoint and continue working. Do not retry or loop on compaction.
+  4. After compacting, read back both `plan.md` and `progress.md` from the run subfolder to reload state
 - The progress file is append-only — add new sections on each checkpoint, don't overwrite
 
 Progress checkpoint format:
@@ -149,7 +155,7 @@ Progress checkpoint format:
 
 When all tasks are done or no more progress can be made:
 
-1. Write a completion report to `~/projects/Agent/autonomous_runs/{NNN}_completion.md`:
+1. Write a completion report to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/completion.md`:
 
 ```markdown
 # Autonomous Run {NNN} — Completion Report
@@ -188,7 +194,7 @@ When all tasks are done or no more progress can be made:
 ```
 ## Autonomous Run {NNN} Complete
 **Status**: {all passed / N of M tasks completed}
-Saved to: `autonomous_runs/{NNN}_completion.md`
+Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 
 **What was built:**
 - {top 3-5 bullets}
@@ -210,3 +216,7 @@ Saved to: `autonomous_runs/{NNN}_completion.md`
 - NEVER skip the progress checkpoint when context is getting high
 - Use 3-digit zero-padded run numbers (001, 002, etc.)
 - Use today's actual date in all files
+
+## Changelog
+- **2026-03-05**: Initial version
+- **2026-03-05**: Review fixes — compact fallback, checkpoint heuristic, guardrail tightening, subfolder structure, AskUserQuestion for approval
