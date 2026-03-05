@@ -31,9 +31,25 @@
 
 ### Pending / Next Session
 - **Test `/autonomous` for real** — skill needs a session restart to be discovered, then a real run with a small task
-- **Security audit rename** — the file was renamed from `001_full-workspace-and-vps-audit.md` to `001_security-audit.md` but the git rename hasn't been committed (handled in this winddown's wip commit)
+- **Security audit rename** — committed in this winddown's wip commit (done)
 - **Optional security hardening** — disable SSH password auth (one-line fix, low urgency since Tailscale firewall blocks all external access). fail2ban not needed.
-- **No revenue projects started yet** — still in tooling/foundation phase
+- **No revenue projects started yet** — still in tooling/foundation phase, but foundation is ready
+
+### Setup Improvements to Make (researched this session)
+
+**Do this week:**
+- **tmux persistence** — run Claude inside `tmux new-session -s claude` on the VPS so sessions survive SSH drops. Reconnect with `tmux attach -t claude`. One-time habit change, big payoff.
+- **SSH keep-alive** — add to Mac's `~/.ssh/config`: `ServerAliveInterval 60`, `ServerAliveCountMax 3` for the Hostinger host. Prevents idle disconnects.
+- **`claude --continue`** — resumes last session with full conversation history. Good alias: `alias c='claude --continue'`
+
+**Do this month:**
+- **Git worktrees** — `claude --worktree <name>` runs parallel Claude sessions on isolated branches. Essential once real projects start (e.g., one worktree per project/client).
+- **GitHub MCP server** — lets Claude create PRs, read issues, interact with GitHub directly from conversation instead of just `git push`.
+
+**Future (when revenue projects are active):**
+- **Agent teams** — multiple agents that coordinate and share discoveries mid-task. Overkill now, powerful later.
+- **`/rename` sessions** before closing — makes the resume picker useful when you have 20+ sessions.
+- **Custom n8n MCP server** — let Claude read/modify n8n workflows directly. Good project once n8n is actively used for revenue.
 
 ### Git State
 - Branch: `main`
