@@ -43,7 +43,7 @@ These are all nice-to-haves since Hostinger's firewall is the primary protection
 2. **Set `PermitRootLogin prohibit-password`** in `/etc/ssh/sshd_config`
 3. **Install fail2ban** — extra safety net
 4. **Enable UFW** — redundant backup to Hostinger firewall (`ufw allow from 100.64.0.0/10` then `ufw enable`)
-5. **chmod 700 ~/.claude/** — minor, good practice
+- ~~chmod 700 ~/.claude/~~ — skipped, Nate is the only user on the VPS
 
 ---
 
@@ -52,17 +52,16 @@ These are all nice-to-haves since Hostinger's firewall is the primary protection
 | Finding | Status |
 |---------|--------|
 | Secrets in git history | **OK** — none found |
-| .gitignore coverage | **WARNING** — missing `*.pem`, `*.key`, `*.p12`, `*.pfx` patterns |
+| .gitignore coverage | **FIXED** — added `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.crt` (2026-03-05) |
 | .env files | **OK** — no live .env, example has no real values |
 | Hardcoded secrets | **OK** — none |
 | File permissions | **OK** — no world-writable files |
 | Claude settings | **OK** — no sensitive data |
 | Docker files | **OK** — none in repo |
-| Tailscale IP in .env.example | **INFO** — `100.114.8.49` is in a public repo, not routable but reveals topology |
+| Tailscale IP in .env.example | **FIXED** — replaced with `YOUR_TAILSCALE_IP` placeholder (2026-03-05). Note: old IP still in git history, but non-routable and low risk. |
 
 ### Recommended Actions
-1. Add `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.crt` to `.gitignore`
-2. Consider replacing Tailscale IP in `.env.example` with placeholder
+All completed — no remaining project security actions.
 
 ---
 
