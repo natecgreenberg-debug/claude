@@ -77,12 +77,20 @@ Write the approved plan to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.m
 This run follows the embedded guardrails in the /autonomous skill.
 ```
 
-### 3c: Compact and Reload
+### 3c: Compact and Hand Off
 
-1. Use `/compact` to clear context
-2. If `/compact` does not execute or context remains high afterward, write the progress checkpoint and continue working. Do not retry or loop on compaction.
-3. After compacting, read back `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.md` to reload the execution plan
-4. Enter autonomous execution mode
+The assistant CANNOT invoke `/compact` — it is a user-only CLI command. Compaction must happen as the final interactive step before Nate walks away.
+
+1. Verify `plan.md` is saved and complete (including Pre-resolved Decisions section)
+2. Print this exact message to Nate:
+   ```
+   Plan saved to: autonomous_runs/{NNN}_{slug}/plan.md
+
+   Ready for autonomous execution. Please run `/compact` now, then say "go" to start.
+   ```
+3. **WAIT for Nate to run `/compact` and respond.** Do not proceed until he confirms.
+4. After compaction, read back `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.md` to reload the execution plan
+5. Enter autonomous execution mode — Nate is now AFK
 
 ## Phase 4: Execute (autonomous — Nate is AFK)
 
@@ -135,8 +143,7 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Write a checkpoint when you receive system warnings about context limits OR notice message compression happening. As a safety net, also checkpoint at least every 3 tasks. Always leave enough room to write a useful checkpoint.
 - Steps when checkpointing:
   1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/progress.md`
-  2. Use `/compact` to clear context
-  3. If `/compact` does not execute or context remains high afterward, write the progress checkpoint and continue working. Do not retry or loop on compaction.
+  2. The system will automatically compress earlier messages as context gets high. You cannot invoke `/compact` — it is a user-only command. Continue working after writing the checkpoint.
   4. After compacting, read back both `plan.md` and `progress.md` from the run subfolder to reload state
 - The progress file is append-only — add new sections on each checkpoint, don't overwrite
 
@@ -216,7 +223,7 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - ALWAYS complete Phase 1 and 2 interactively — never skip straight to execution
 - ALWAYS wait for explicit approval before executing
 - ALWAYS save the plan before starting execution
-- ALWAYS compact and reload from saved files before executing (clean context = better execution)
+- ALWAYS ask Nate to run `/compact` before execution begins — this is the last interactive step before he walks away
 - ALWAYS commit and push after each meaningful chunk
 - ALWAYS produce a completion report, even if all tasks failed
 - NEVER trigger permission prompts that would block unattended execution
@@ -229,3 +236,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - **2026-03-05**: Initial version
 - **2026-03-05**: Review fixes — compact fallback, checkpoint heuristic, guardrail tightening, subfolder structure, AskUserQuestion for approval
 - **2026-03-05**: Strengthened autonomous execution — Phase 1 now identifies all decision points upfront, Phase 2 plan includes pre-resolved decisions, Phase 4 guardrail makes plan decisions binding (never ask user during execution)
+- **2026-03-05**: Fixed compaction — assistant cannot invoke /compact, so it's now a user step at the Phase 2→4 handoff. Context Management during execution relies on automatic compression + checkpoints.
