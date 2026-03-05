@@ -18,8 +18,9 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
    - Scope (what's in, what's out)
    - Requirements (specific behaviors, formats, constraints)
    - Success criteria (how to know each task is done)
+   - **Decision points**: Think through every step of execution and identify moments where a sub-skill, tool, or workflow would normally ask the user for input (e.g., overwrite vs append, which option to pick, how to handle an edge case). Ask about ALL of these upfront so every decision is pre-resolved before Nate leaves.
 4. After Nate answers, produce the plan (Phase 2). Nate iterates on the *plan*, not the questions. He controls how many revision rounds happen by approving or requesting changes.
-5. Do NOT proceed to planning until you're confident
+5. Do NOT proceed to planning until you're confident — especially that all decision points are resolved
 
 ## Phase 2: Plan (interactive)
 
@@ -27,6 +28,7 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
    - **Numbered task list** with clear deliverables per task
    - **Files to create/modify** for each task
    - **Dependencies** between tasks (what must happen in order)
+   - **Pre-resolved decisions**: Every decision point identified in Phase 1 must have an explicit answer in the plan (e.g., "If append mode triggers, overwrite." / "If tests fail, skip and log." / "Use option X, not Y."). These are binding during execution.
    - **Known blockers** that will need human action (flagged early so Nate can unblock before leaving)
    - **Success criteria** for each task
 2. Use `AskUserQuestion` to present the plan with these explicit options:
@@ -109,9 +111,11 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Never use `rm -rf` during autonomous runs. Use targeted `rm` on specific files when needed.
 - If a package install is needed, log it as a human action item and skip
 
-**Plan decisions override sub-skill prompts:**
-- When executing an approved plan, decisions already specified in the plan take precedence over interactive prompts in sub-skills (e.g., if the plan says "overwrite", do not ask the user whether to overwrite or append)
-- Only pause for genuinely unexpected situations not covered by the plan
+**The approved plan is law — NEVER ask the user during execution:**
+- When a sub-skill, tool, or workflow says "ask the user" or "prompt for input", DO NOT. The plan has already decided. Follow the pre-resolved decision from the plan.
+- Examples: if the plan says "overwrite", overwrite without asking. If the plan says "use option X", use it. If the plan says "skip tests", skip them.
+- If you hit a decision point that genuinely was NOT covered by the plan and cannot be reasonably inferred, log it in progress.md, make the safest/most reversible choice, and keep going. Do not stop execution.
+- The entire point of Phases 1-2 is to front-load every decision. If you're tempted to ask during Phase 4, something went wrong in planning — but the answer is still to keep going, not to block.
 
 **Never do things that need human judgment:**
 - Do NOT create or comment on GitHub issues/PRs
@@ -224,4 +228,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 ## Changelog
 - **2026-03-05**: Initial version
 - **2026-03-05**: Review fixes — compact fallback, checkpoint heuristic, guardrail tightening, subfolder structure, AskUserQuestion for approval
-- **2026-03-05**: Added "plan decisions override sub-skill prompts" guardrail to prevent unnecessary user prompts during autonomous execution
+- **2026-03-05**: Strengthened autonomous execution — Phase 1 now identifies all decision points upfront, Phase 2 plan includes pre-resolved decisions, Phase 4 guardrail makes plan decisions binding (never ask user during execution)
