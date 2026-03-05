@@ -35,9 +35,9 @@ This means the on-server SSH findings below are **defense-in-depth recommendatio
 | **OK** | No unexpected users | Only root, ubuntu (default), sync (system) |
 | **OK** | No suspicious cron jobs | Standard Ubuntu entries only |
 
-### Defense-in-Depth Recommendations (Not Urgent)
+### Defense-in-Depth Recommendations (Low Priority — Not Doing Yet)
 
-These are all nice-to-haves since Hostinger's firewall is the primary protection:
+These are all nice-to-haves since Hostinger's firewall is the primary protection. Nate reviewed these on 2026-03-05 and decided to defer — revisit if Hostinger firewall config ever changes.
 
 1. **Disable SSH password auth** — edit `/etc/ssh/sshd_config.d/50-cloud-init.conf`, set `PasswordAuthentication no`, restart SSH
 2. **Set `PermitRootLogin prohibit-password`** in `/etc/ssh/sshd_config`
