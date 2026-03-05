@@ -80,19 +80,52 @@ Write the file to `~/projects/Agent/context_dumps/{NNN}_{slug}.md` using this te
 [Bullet points — anything the next agent should know about user preferences, architectural decisions, or corrections made during this session]
 ```
 
-## Step 5: Auto-Commit and Push
+## Step 5: Generate Handoff File
+
+Create a handoff file for the next session's `/startsession` skill.
+
+1. **Detect restart-dependent changes** by checking `git diff --name-only` and `git status --short` for files in:
+   - `.claude/skills/` (new or modified skills)
+   - `.claude/hooks/` (new or modified hooks)
+   - `.claude/claude.md`, `.claude/rules/`, `.claude/settings.local.json` (config changes)
+
+2. **Gather from conversation**: what's in progress, open questions, most relevant files
+
+3. **Write to `~/projects/Agent/handoff.md`** (overwrite if exists) using this template:
+
+```markdown
+# Session Handoff
+**Generated**: {YYYY-MM-DD HH:MM}
+**Previous session**: {context dump filename}
+
+## Restart-Dependent Items
+- [ ] **New skill**: `.claude/skills/foo/SKILL.md` — test with `/foo` to confirm discovery
+- [ ] **Hook modified**: `.claude/hooks/deny-commands.sh` — verify with test command
+(or "None" if nothing detected)
+
+## What Was In Progress
+- {1-3 bullets of pending work}
+
+## Open Questions
+- {Unresolved decisions, or "None"}
+
+## Quick Orientation
+- `path/to/file` — why it's relevant
+```
+
+## Step 6: Auto-Commit and Push
 
 Two separate commits if there are uncommitted changes:
 
 1. **First commit (if needed)**: Check `git status` for uncommitted changes. If any exist:
    - Stage all relevant files (skip `.env`, secrets, and gitignored files)
    - Commit with message: `wip: uncommitted changes before context dump {NNN}`
-2. **Second commit**: Stage the new context dump file:
-   - `git add context_dumps/{filename}`
+2. **Second commit**: Stage the new context dump file and handoff file:
+   - `git add context_dumps/{filename} handoff.md`
    - Commit with message: `docs: context dump {NNN} — {slug}`
 3. **Push**: `git push`
 
-## Step 6: Print Confirmation
+## Step 7: Print Confirmation
 
 Print a summary in chat:
 
@@ -122,3 +155,4 @@ Print a summary in chat:
 
 - **2026-03-04**: Updated commit strategy from single commit to two-commit approach — uncommitted work gets its own `wip:` commit before the `docs:` context dump commit. Rationale: keeps real work and session bookkeeping separate in git history.
 - **2026-03-04**: Renamed from `/context` to `/winddown` — `/context` collides with a built-in Claude Code command that visualizes context usage. Hyphenated name `/wind-down` also failed ("unknown skill"), so went with no hyphen.
+- **2026-03-05**: Added Step 5 (Generate Handoff File) — writes `handoff.md` for `/startsession` to consume. Flags restart-dependent changes (new skills, hooks, config). Old Steps 5-6 became Steps 6-7.

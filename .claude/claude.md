@@ -21,6 +21,7 @@
 - When Nate makes a correction or shares a helpful note, ask if he wants it added to this `claude.md` file
 - When context gets high, proactively compact
 - **Session wind-down**: When Nate signals a session is ending (or context is critically high), always: (1) summarize what was done + what's next, (2) write/update a context dump in `context_dumps/`, (3) commit all changes and push to GitHub. The next agent should be able to pick up exactly where we left off.
+- **Session start-up**: On the first message of a new session, suggest running `/startsession` if it hasn't been run yet. Don't run it automatically — just suggest it.
 
 ## Environment
 - **OS**: Ubuntu 24.04 on Hostinger VPS
@@ -58,6 +59,7 @@
 ├── research/          # Research outputs and reports
 ├── tools/             # Shared utilities and scripts
 ├── data/              # Data files, exports, datasets
+├── handoff.md         # Temporary session handoff (created by /winddown, consumed by /startsession)
 └── .env               # API keys (gitignored)
 ```
 
