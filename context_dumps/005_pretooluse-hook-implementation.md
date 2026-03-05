@@ -9,6 +9,7 @@
 5. Updated memory files (`MEMORY.md` and `permissions.md`) with hook documentation
 6. Created handoff file `security_audits/TEMP_hook_test_handoff.md` for next session to run live tests
 7. Updated handoff file with explicit safety instructions and agent directions
+8. Fixed statusline — script existed at `~/.claude/statusline-command.sh` but was never wired up in settings. Added `"statusLine"` config to `~/.claude/settings.json`. Takes effect on next restart.
 
 ### What Went Right
 - Hook script is clean and simple — ~15 lines of bash
@@ -25,6 +26,7 @@
 - **PRIMARY**: Run the live test plan in `security_audits/TEMP_hook_test_handoff.md` — just start a new session in `~/projects/Agent/` and tell it to read that file and run the tests
 - After tests pass: delete the TEMP handoff file, commit, push
 - If tests fail: troubleshoot using the debugging checklist in the handoff file
+- Verify statusline appears at bottom of terminal on next session start (model + context usage)
 
 ### Git State
 - Branch: `main`
@@ -45,9 +47,13 @@
 | `~/.claude/projects/-root-projects/memory/permissions.md` | Modified |
 | `security_audits/001_full-workspace-and-vps-audit.md` | Modified (minor wording update) |
 | `security_audits/TEMP_hook_test_handoff.md` | Created |
+| `~/.claude/settings.json` | Modified (added statusLine config) |
+| `~/.claude/statusline-command.sh` | Already existed, just needed wiring up |
 
 ### Key Decisions / Preferences Learned
 - Nate wants handoff files when work spans sessions — don't delete them prematurely
 - Hook uses `"permissionDecision": "ask"` (prompt) not `"deny"` (hard block) — Nate wants to approve commands when at keyboard, not be locked out
 - Deny rules kept in settings.json as fallback even though they're broken — no harm, might work someday
 - Always make test commands safe even in failure scenarios — assume the hook might not work
+- Statusline script can exist without being active — must be registered in settings.json under `"statusLine"` key
+- Context dumps should be updated if more work happens after the dump is written (don't leave stale info)
