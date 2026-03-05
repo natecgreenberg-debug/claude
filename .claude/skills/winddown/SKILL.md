@@ -1,12 +1,12 @@
 ---
 name: winddown
-description: Automates session wind-down — gathers git state, conversation context, and writes a structured context dump. Commits and pushes automatically.
+description: Automates session wind-down — gathers git state, conversation context, writes a structured context dump and handoff file for the next session. Commits and pushes automatically.
 argument-hint: "[session description]"
 ---
 
 # Context Dump Skill
 
-You have been invoked as `/winddown`. Your job is to create a structured context dump capturing the current session's work, commit it, and push to GitHub so the next agent can pick up seamlessly.
+You have been invoked as `/winddown`. Your job is to create a structured context dump and handoff file capturing the current session's work, commit them, and push to GitHub so the next agent can pick up seamlessly.
 
 ## Step 1: Get Session Description
 
@@ -33,7 +33,7 @@ Collect the following automatically using shell commands:
 2. **Git diff stat**: Run `git diff --stat` for uncommitted changes
 3. **Git status**: Run `git status --short` for untracked/modified files
 4. **Current branch**: Run `git branch --show-current`
-5. **Files modified**: Run `git diff --name-status HEAD~10` (or fewer if less than 10 commits exist) to identify files changed this session
+5. **Files modified**: First run `git rev-list --count HEAD` to get total commit count, then run `git diff --name-status HEAD~N` where N is the minimum of that count and 10
 
 Then review the current conversation to extract:
 - What was accomplished this session
@@ -84,7 +84,7 @@ Write the file to `~/projects/Agent/context_dumps/{NNN}_{slug}.md` using this te
 
 Create a handoff file for the next session's `/startsession` skill.
 
-1. **Detect restart-dependent changes** by checking `git diff --name-only` and `git status --short` for files in:
+1. **Detect restart-dependent changes** by checking `git diff --name-only`, `git status --short`, AND `git diff --name-only HEAD~10` (to catch already-committed session changes; use fewer if <10 commits exist) for files in:
    - `.claude/skills/` (new or modified skills)
    - `.claude/hooks/` (new or modified hooks)
    - `.claude/claude.md`, `.claude/rules/`, `.claude/settings.local.json` (config changes)
@@ -118,7 +118,7 @@ Create a handoff file for the next session's `/startsession` skill.
 Two separate commits if there are uncommitted changes:
 
 1. **First commit (if needed)**: Check `git status` for uncommitted changes. If any exist:
-   - Stage all relevant files (skip `.env`, secrets, and gitignored files)
+   - Stage with `git add -A` (`.gitignore` handles exclusions — verify `.env` is gitignored)
    - Commit with message: `wip: uncommitted changes before context dump {NNN}`
 2. **Second commit**: Stage the new context dump file and handoff file:
    - `git add context_dumps/{filename} handoff.md`

@@ -15,7 +15,7 @@ You have been invoked as `/startsession`. Your job is to get oriented on the cur
 
 ## Step 2: Read Latest Context Dump
 
-- Find the highest-numbered file in `~/projects/Agent/context_dumps/` (files follow `{NNN}_{slug}.md` pattern)
+- Find the highest-numbered file in `~/projects/Agent/context_dumps/` using: `ls ~/projects/Agent/context_dumps/ | sort -t_ -k1 -n | tail -1`
 - Read it to understand: what happened last session, what's pending, key decisions made
 - If no context dumps exist, skip this step
 
@@ -34,7 +34,7 @@ Quick-scan these project files to refresh on conventions and current state:
 - `.claude/claude.md` — project brain
 - `.claude/rules/workflow.md` — workflow conventions
 - `.claude/rules/code-style.md` — code standards
-- Check MEMORY.md for any recent updates
+- Check `~/.claude/projects/-root-projects/memory/MEMORY.md` (root memory) and `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` (project memory, if it exists) for any recent updates
 
 Do NOT dump the contents of these files into chat. Just internalize them.
 
@@ -51,10 +51,11 @@ If the handoff file listed restart-dependent items, verify each one:
 
 If `~/projects/Agent/handoff.md` existed:
 
-1. `rm ~/projects/Agent/handoff.md`
-2. `git add handoff.md` (stages the deletion)
-3. Commit: `chore: consume session handoff`
-4. `git push`
+1. Run as a single chained command from the repo root:
+   ```
+   cd ~/projects/Agent && rm handoff.md && git add handoff.md && git commit -m "chore: consume session handoff" && git push
+   ```
+2. If any step fails, report the error but continue with the session.
 
 If no handoff file existed, skip this step entirely.
 
