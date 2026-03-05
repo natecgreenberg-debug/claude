@@ -114,6 +114,16 @@ These commands are all safe even if they execute without prompting:
 | `~/.claude/settings.json` | Global settings with hook config |
 | `~/.claude/projects/-root-projects/memory/permissions.md` | Full documentation |
 
+### Round 5: Verify `/winddown` skill is discoverable
+
+17. **Run `/winddown`** (use the Skill tool with skill name "winddown")
+    - Expected: The skill should be recognized and load its instructions
+    - This skill was created in a prior session. If this new session discovers it, that confirms skills persist across restarts.
+    - If it's NOT found: that's useful info too — report the error. It may mean the skill cache needs investigation.
+    - Do NOT actually execute the full winddown (don't write a context dump). Just confirm the skill is accessible, then stop.
+
+---
+
 ## After All Tests Pass
 
 1. Delete this file: `rm ~/projects/Agent/security_audits/TEMP_hook_test_handoff.md`
