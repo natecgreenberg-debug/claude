@@ -32,5 +32,6 @@ Every task follows this pattern. No exceptions.
 
 ## Git Habits
 - Commit early, commit often
+- Always `git push` after committing — never leave unpushed commits
 - Message format: `type: description` (e.g., `feat: add research agent`, `fix: handle empty API response`)
 - Never commit `.env` files or API keys
