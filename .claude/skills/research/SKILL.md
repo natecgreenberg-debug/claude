@@ -206,6 +206,7 @@ For multi-topic batches, print summaries for all topics.
 
 ## Rules
 
+- Maximum 10 agents per invocation. If a multi-topic batch would exceed this, reduce per-topic agent count or process topics sequentially.
 - ALWAYS launch all agents in parallel (single message with multiple Agent tool calls)
 - Design agents fresh for each topic — no fixed agent menu
 - Each agent: max 2 WebFetch calls, prefer snippet extraction
