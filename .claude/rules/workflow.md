@@ -30,6 +30,11 @@ Every task follows this pattern. No exceptions.
 - Summarize what's been done and what's next before compacting
 - Leave breadcrumbs in code comments or task files
 
+## Research Outputs
+- Research is informational only — never auto-promote findings into action items or backlogs
+- Only implement something from research if the user explicitly requests it
+- Do not treat research recommendations as pending work
+
 ## Git Habits
 - Commit early, commit often
 - Always `git push` after committing — never leave unpushed commits
