@@ -109,7 +109,9 @@ Do not cite your own inferences or analysis — only cite sourced claims. Unsour
 - **Facts observed**: [list concrete, verifiable facts found]
 - **Opinions/recommendations**: [list subjective takes, clearly marked as opinions]
 
-**You MUST return your output using the exact structure above. Do not add extra sections, skip sections, or restructure. Non-compliant output will be discarded.**
+**You MUST return your output using the exact structure above. Do not add extra sections, skip sections, or restructure.**
+
+**Output quality**: If an agent's output is missing required sections, poorly sourced, or off-topic, extract what you can and note the gap in Contradictions & Gaps. What counts as "good enough" depends on the research topic — discuss quality expectations with the user before synthesizing if unsure.
 ```
 
 ## Step 4: Consolidate Into Report (Parent Does This)
