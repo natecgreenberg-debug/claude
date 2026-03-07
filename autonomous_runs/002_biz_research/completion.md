@@ -74,12 +74,25 @@ One of 5 background research agents (Digital Asset Landlord) stalled after ~1 mi
 
 **Recommended fix**: Future autonomous runs should implement a timeout for background agents (e.g., 10 minutes max). If no completion notification arrives, log the failure and continue. The pre-resolved decision table already said "If a research agent fails, log in progress.md, skip that topic, continue" -- but the detection mechanism (waiting for notification) didn't trigger because the agent didn't explicitly fail.
 
+### Process Failures (beyond the stalled agent)
+1. **No incremental commits.** Everything was committed in one batch at the end. Should have committed after Tasks 1-2, again after research reports were saved. If the session had crashed, all work would have been lost.
+2. **Context got high.** Full docx extraction (Business Doc = 117K chars) consumed too much context early. Should have extracted only what was needed.
+3. **progress.md not updated frequently.** Only updated twice during the run. Should be updated after every task completion so an observer or next session can see real-time status.
+
+### Lessons for Future Autonomous Runs
+- Add a 10-minute timeout check for background agents — read output file, decide if dead, move on
+- Commit after each completed task, not in a batch
+- Keep progress.md as a real-time status board
+- Extract only needed data from large documents to conserve context
+- When 4/5 agents finish in 5 minutes and 1 hasn't, check immediately — don't keep waiting
+
 ## What Went Right
 - Tasks 1 and 2 completed quickly using document extraction + environment audit
-- 4 of 5 research agents returned high-quality reports with citations
-- Parallel agent execution worked well (all 5 launched simultaneously)
-- Research reports are comprehensive and actionable
-- Scaffold is minimal but functional (script runs with stdlib only)
+- 4 of 5 research agents returned high-quality reports with real citations and data
+- Parallel agent execution worked well (all 5 launched simultaneously, 4 returned in 3.5-5 min each)
+- Research quality was high — real competitor pricing, conversion benchmarks, honest assessments
+- Feasibility scoring caught real issues (no pip, n8n creds in encrypted store, Tailscale blocks public webhooks)
+- Scaffold is minimal but functional (script runs with stdlib only, verified working)
 
 ## Human Action Items
 1. **Review recommendation.md** -- confirm the #1 pick makes sense
