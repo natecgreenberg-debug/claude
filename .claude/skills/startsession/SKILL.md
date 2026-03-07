@@ -15,7 +15,7 @@ You have been invoked as `/startsession`. Your job is to get oriented on the cur
 
 ## Step 2: Read Latest Context Dump
 
-- Find the highest-numbered file in `~/projects/Agent/context_dumps/` using: `ls ~/projects/Agent/context_dumps/ | sort -t_ -k1 -n | tail -1`
+- Find the highest-numbered file in `~/projects/Agent/context_dumps/` using: `ls ~/projects/Agent/context_dumps/ | grep -E '^[0-9]+_' | sort -t_ -k1 -n | tail -1`
 - Read it to understand: what happened last session, what's pending, key decisions made
 - If no context dumps exist, skip this step
 
@@ -34,7 +34,7 @@ Quick-scan these project files to refresh on conventions and current state:
 - `.claude/claude.md` — project brain
 - `.claude/rules/workflow.md` — workflow conventions
 - `.claude/rules/code-style.md` — code standards
-- Check `~/.claude/projects/-root-projects/memory/MEMORY.md` (root memory) and `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` (project memory, if it exists) for any recent updates
+- Check `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` (project memory) for any recent updates
 
 Do NOT dump the contents of these files into chat. Just internalize them.
 
@@ -48,6 +48,8 @@ If the handoff file listed restart-dependent items, verify each one:
 - If no restart-dependent items (or no handoff), skip this step.
 
 ## Step 6: Delete Handoff File
+
+> **Note**: Use the handoff contents already captured in Step 1 for the summary in Step 7 — the file is being deleted here.
 
 If `~/projects/Agent/handoff.md` existed:
 

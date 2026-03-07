@@ -4,7 +4,7 @@ description: Automates session wind-down — gathers git state, conversation con
 argument-hint: "[session description]"
 ---
 
-# Context Dump Skill
+# Winddown Skill
 
 You have been invoked as `/winddown`. Your job is to create a structured context dump and handoff file capturing the current session's work, commit them, and push to GitHub so the next agent can pick up seamlessly.
 
@@ -21,7 +21,7 @@ Scan `~/projects/Agent/context_dumps/` for existing files. Files follow the patt
 - Increment by 1 for the new file
 - Pad to 3 digits (e.g., `003`)
 
-Slugify the session description: lowercase, replace spaces with hyphens, remove special characters, truncate to ~50 chars.
+Slugify the session description: lowercase, replace spaces with hyphens, remove special characters, truncate to 50 characters, breaking at the last hyphen before the limit.
 
 New filename: `{NNN}_{slug}.md`
 
@@ -30,10 +30,9 @@ New filename: `{NNN}_{slug}.md`
 Collect the following automatically using shell commands:
 
 1. **Git log**: Run `git log --oneline -20` to get recent commits
-2. **Git diff stat**: Run `git diff --stat` for uncommitted changes
-3. **Git status**: Run `git status --short` for untracked/modified files
-4. **Current branch**: Run `git branch --show-current`
-5. **Files modified**: First run `git rev-list --count HEAD` to get total commit count, then run `git diff --name-status HEAD~N` where N is the minimum of that count and 10
+2. **Git status**: Run `git status --short` for untracked/modified files
+3. **Current branch**: Run `git branch --show-current`
+4. **Files modified**: First run `git rev-list --count HEAD` to get total commit count, then run `git diff --name-status HEAD~N` where N is the minimum of (total commit count - 1) and 10. If only 1 commit exists, use `git diff --name-status --root HEAD` instead.
 
 Then review the current conversation to extract:
 - What was accomplished this session
@@ -84,7 +83,7 @@ Write the file to `~/projects/Agent/context_dumps/{NNN}_{slug}.md` using this te
 
 Create a handoff file for the next session's `/startsession` skill.
 
-1. **Detect restart-dependent changes** by checking `git diff --name-only`, `git status --short`, AND `git diff --name-only HEAD~10` (to catch already-committed session changes; use fewer if <10 commits exist) for files in:
+1. **Detect restart-dependent changes** by checking `git diff --name-only HEAD`, `git status --short`, AND `git diff --name-only HEAD~10` (to catch already-committed session changes; use fewer if <10 commits exist) for files in:
    - `.claude/skills/` (new or modified skills)
    - `.claude/hooks/` (new or modified hooks)
    - `.claude/claude.md`, `.claude/rules/`, `.claude/settings.local.json` (config changes)
@@ -141,12 +140,12 @@ Read `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` and check whethe
 Two separate commits if there are uncommitted changes:
 
 1. **First commit (if needed)**: Check `git status` for uncommitted changes. If any exist:
-   - Stage with `git add -A` (`.gitignore` handles exclusions — verify `.env` is gitignored)
+   - Stage with `cd ~/projects/Agent && git add -A` (`.gitignore` handles exclusions — verify `.env` is gitignored)
    - Commit with message: `wip: uncommitted changes before context dump {NNN}`
 2. **Second commit**: Stage the new context dump file and handoff file:
-   - `git add context_dumps/{filename} handoff.md`
-   - Commit with message: `docs: context dump {NNN} — {slug}`
-3. **Push**: `git push`
+   - `cd ~/projects/Agent && git add context_dumps/{filename} handoff.md`
+   - `cd ~/projects/Agent && git commit -m "docs: context dump {NNN} — {slug}"`
+3. **Push**: `cd ~/projects/Agent && git push`
 
 ## Step 8: Print Confirmation
 
@@ -172,7 +171,7 @@ Print a summary in chat:
 - Never commit `.env` or gitignored files
 - Use today's actual date
 - 3-digit zero-padded numbers (001, 002, etc.)
-- ALWAYS `git push` immediately after every commit — never leave unpushed commits
+- Always push after committing — never leave unpushed commits at the end of the skill.
 
 ## Changelog
 

@@ -19,6 +19,8 @@ Parse `$ARGUMENTS` to determine mode and topics:
 
 Split on `|` and trim whitespace. Each segment is one research topic. Strip `--quick` flag before processing topic text.
 
+If all segments after splitting are fewer than 3 words each, treat the entire input as a single topic.
+
 ## Step 2: Assess Complexity & Design Agents
 
 For **each topic**, analyze it and design a custom research team. Do NOT use a fixed set of agents — design the right team for the specific topic.
@@ -116,7 +118,7 @@ After all agents return, the **parent agent synthesizes** the findings — do NO
 
 Synthesis process:
 1. **Deduplicate**: merge overlapping findings across agents
-2. **Cross-reference**: when 2+ agents found the same fact, upgrade citation to `[Verified: Source1 + Source2]`
+2. **Cross-reference**: when 2+ agents found the same fact, upgrade citation to `[Verified: Source1 + Source2]`. Only upgrade to [Verified] when the underlying sources are independent (different URLs/authors). Two agents citing the same single URL is not cross-verification.
 3. **Flag contradictions**: note where agents found conflicting information
 4. **Preserve citations**: keep all inline citation tags from agent outputs; upgrade/merge where appropriate
 5. **Identify gaps**: note areas where data was thin or missing
@@ -176,6 +178,8 @@ If no contradictions found, say so briefly.]
 Save each report to: `~/projects/Agent/research/{YYYY-MM-DD}_{topic-slug}.md`
 
 Slugify the topic: lowercase, replace spaces with hyphens, remove special characters, truncate to ~50 chars.
+
+If a file with the same slug already exists for today's date, append `-2` (or `-3`, etc.) to the slug before checking for append mode.
 
 **Append mode**: If a file with the same slug already exists, tell the user and ask whether to:
 - **Overwrite**: replace the old report entirely

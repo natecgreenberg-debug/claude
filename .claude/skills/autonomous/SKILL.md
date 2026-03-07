@@ -31,7 +31,7 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
    - **Pre-resolved decisions**: Every decision point identified in Phase 1 must have an explicit answer in the plan (e.g., "If append mode triggers, overwrite." / "If tests fail, skip and log." / "Use option X, not Y."). These are binding during execution.
    - **Known blockers** that will need human action (flagged early so Nate can unblock before leaving)
    - **Success criteria** for each task
-2. Use `AskUserQuestion` to present the plan with these explicit options:
+2. Use `AskUserQuestion` to present the plan with these explicit options (if `AskUserQuestion` is unavailable, present the plan in chat and ask Nate to reply with his choice):
    - **"Approve — start execution"**
    - **"Revise — let's do another round"**
 3. Iterate on the plan if Nate chooses "Revise" — no limit on revision rounds

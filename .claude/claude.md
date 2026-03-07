@@ -25,7 +25,7 @@
 
 ## Environment
 - **OS**: Ubuntu 24.04 on Hostinger VPS
-- **Access**: Tailscale only (IP: 100.114.8.49), firewall drops everything else
+- **Access**: Tailscale only (IP defined in `.env` as `TAILSCALE_IP`), firewall drops everything else
 - **IDE**: Antigravity (VS Code fork) + Claude Code via Remote SSH
 - **Docker**: Installed, n8n running on port 5678
 - **GitHub**: SSH configured, user `natecgreenberg-debug`

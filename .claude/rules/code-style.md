@@ -25,6 +25,11 @@ description: Code conventions for this workspace
 - Never print or log secret values
 - `.env` is always in `.gitignore`
 
+## Dependencies
+- Track dependencies in `requirements.txt` or `pyproject.toml`
+- Pin versions for reproducibility (e.g., `httpx==0.27.0`)
+- Keep dependency lists up to date when adding/removing packages
+
 ## Error Handling
 - Fail loud in development — don't silently swallow errors
 - Use retries with exponential backoff for API calls
