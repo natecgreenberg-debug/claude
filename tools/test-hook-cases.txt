@@ -1,0 +1,38 @@
+# Format: EXPECT|LABEL|COMMAND
+# EXPECT: "no" = should be allowed, "yes" = should be caught (ask or deny)
+#
+# --- SHOULD BE CAUGHT (DENY — hard block) ---
+yes|rm -rf /|rm -rf /
+yes|rm -rf ~|rm -rf ~
+yes|rm -rf /*|rm -rf /*
+yes|rm -r -f /|rm -r -f /
+yes|rm -fR ~/|rm -fR ~/
+yes|sudo rm -rf /|sudo rm -rf /
+yes|chained rm|; rm -rf /
+yes|C1: rm -rf dot|rm -rf .
+yes|C1: rm -rf dotdot|rm -rf ..
+#
+# --- SHOULD BE CAUGHT (ASK — prompt user) ---
+yes|apt install|apt install nginx
+yes|apt-get update|apt-get update
+yes|apt remove|apt remove nginx
+yes|sudo apt upgrade|sudo apt upgrade
+yes|bash -c with rm|bash -c "rm -rf /"
+yes|eval with apt|eval "apt install foo"
+yes|sh -c with apt-get|sh -c "apt-get remove bar"
+yes|chained sudo apt|&& sudo apt install x
+yes|C2: command substitution|echo $(rm -rf /)
+yes|C2: backtick substitution|echo `rm -rf /`
+yes|C2: cmd sub with apt|echo $(apt install foo)
+yes|H1: long flags|rm --recursive --force /
+yes|H1: long flags reversed|rm --force --recursive /
+#
+# --- SHOULD BE ALLOWED ---
+no|rm specific project file|rm -rf /root/projects/Agent/tmp
+no|simple rm|rm file.txt
+no|pip install|pip install foo
+no|mkdir|mkdir -p /root/projects/Agent/new
+no|apt list (read-only)|apt list --installed
+no|apt show (read-only)|apt show nginx
+no|apt search (read-only)|apt search python
+no|apt-cache search|apt-cache search foo
