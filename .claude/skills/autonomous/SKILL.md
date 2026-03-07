@@ -18,7 +18,7 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
    - Scope (what's in, what's out)
    - Requirements (specific behaviors, formats, constraints)
    - Success criteria (how to know each task is done)
-   - **Decision points**: Think through every step of execution and identify moments where a sub-skill, tool, or workflow would normally ask the user for input (e.g., overwrite vs append, which option to pick, how to handle an edge case). Ask about ALL of these upfront so every decision is pre-resolved before Nate leaves.
+   - **Decision points**: Think through every step of execution and identify moments where a sub-skill, tool, or workflow would normally ask the user for input (e.g., overwrite vs append, which option to pick, how to handle an edge case). Also review any sub-skills the plan will invoke (e.g., `/research`) and identify their interactive prompts — pre-resolve each one. Ask about ALL of these upfront so every decision is pre-resolved before Nate leaves.
 4. After Nate answers, produce the plan (Phase 2). Nate iterates on the *plan*, not the questions. He controls how many revision rounds happen by approving or requesting changes.
 5. Do NOT proceed to planning until you're confident — especially that all decision points are resolved
 
@@ -46,7 +46,8 @@ Scan `~/projects/Agent/autonomous_runs/` for existing numbered subfolders. Subfo
 - Find the highest `NNN` prefix across all subfolders
 - Increment by 1 for the new run
 - Pad to 3 digits (e.g., `003`)
-- Create a subfolder: `{NNN}_{slugified-description}/` (e.g., `003_deploy-pipeline/`)
+- Create a subfolder: `{NNN}_{slug}/` (e.g., `003_deploy-pipeline/`)
+- Slug format: lowercase, hyphens only (no spaces or special chars), max 30 characters
 
 If no subfolders exist, start at `001`.
 
@@ -70,6 +71,10 @@ Write the approved plan to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.m
 ### Task 2: {title}
 ...
 
+## Pre-resolved Decisions
+- {decision point}: {resolution} (e.g., "If append mode triggers → overwrite")
+- {decision point}: {resolution}
+
 ## Known Blockers
 - {things that need human action, or "None identified"}
 
@@ -77,19 +82,17 @@ Write the approved plan to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.m
 This run follows the embedded guardrails in the /autonomous skill.
 ```
 
-### 3c: Compact and Hand Off
-
-The assistant CANNOT invoke `/compact` — it is a user-only CLI command. Compaction must happen as the final interactive step before Nate walks away.
+### 3c: Prepare and Hand Off
 
 1. Verify `plan.md` is saved and complete (including Pre-resolved Decisions section)
-2. Print this exact message to Nate:
+2. Write an initial entry to `progress.md`: "Phase 4 starting. Plan saved. Execution beginning with Task 1."
+3. Print this exact message to Nate:
    ```
    Plan saved to: autonomous_runs/{NNN}_{slug}/plan.md
 
-   Ready for autonomous execution. Please run `/compact` now, then say "go" to start.
+   Ready for autonomous execution. Say "go" to start (run `/compact` first if you want to free up context).
    ```
-3. **WAIT for Nate to run `/compact` and respond.** Do not proceed until he confirms.
-4. After compaction, read back `~/projects/Agent/autonomous_runs/{NNN}_{slug}/plan.md` to reload the execution plan
+4. **WAIT for Nate to respond.** Do not proceed until he confirms.
 5. Enter autonomous execution mode — Nate is now AFK
 
 ## Phase 4: Execute (autonomous — Nate is AFK)
@@ -102,17 +105,25 @@ The assistant CANNOT invoke `/compact` — it is a user-only CLI command. Compac
 - Follow all existing project rules (workflow.md, code-style.md)
 - The Phase 2 plan approval serves as blanket approval for all tasks in the plan. Do not pause for per-task approval — the approval rule in workflow.md is satisfied by Phase 2.
 - Use sub-agents for expensive operations (research, code review)
-- When spawning sub-agents, include the autonomy guardrails in their brief so they also avoid `~/.claude/`, `apt`, `rm -rf`, and external services
+- When a task relies on sub-agent output quality, run a single test agent first and evaluate output before launching the full batch. If quality is insufficient, improve the agent brief before proceeding.
+- When spawning sub-agents, include these guardrails in their brief:
+  - Do NOT search, read, or write inside `~/.claude/`
+  - Always scope file searches to the project directory (`~/projects/Agent/`)
+  - Do NOT run `apt`, `apt-get`, or `rm -rf`
+  - Do NOT ask the user questions — follow the brief and return results
+  - Do NOT access external services (GitHub API, Slack, etc.)
 
 ### Autonomy Guardrails
 
 These rules prevent triggering permission prompts that would block unattended execution:
 
-**Never access `~/.claude/` directly:**
+**Never access `~/.claude/` — scope all searches to the project directory:**
 - Do NOT read, edit, grep, or glob inside `~/.claude/`
-- Unsafe examples: `grep -r ... /root/`, `find /root/ ...`, reading or globbing inside `~/.claude/`
-- Safe examples: searching within `/root/projects/Agent/`, using Grep/Glob tools scoped to the project directory
-- If you need config info, check project memory files instead
+- Never use `/root/` or `~/` as a search root — this scans into `~/.claude/` and triggers permission prompts
+- ALWAYS scope searches to `~/projects/Agent/` or more specific subdirectories
+- Unsafe: `grep -r "foo" /root/`, `find /root/ ...`, `Glob("**/*.md", path="/root/")`
+- Safe: `grep -r "foo" ~/projects/Agent/`, `Glob("**/*.md", path="/root/projects/Agent/")`
+- If you need config info, check project memory files in `~/projects/Agent/` instead
 
 **Never run hook-triggering commands:**
 - No `apt` or `apt-get` (any subcommand)
@@ -134,8 +145,11 @@ These rules prevent triggering permission prompts that would block unattended ex
 **When stuck:**
 - Do NOT retry the same failing action in a loop
 - Do NOT brute-force past permission prompts
-- Log what you were trying to do and why it failed
-- Skip to the next task and note the issue for the completion report
+- Do NOT stop to ask the user — push through as much as possible
+- Log what you were trying to do and why it failed in progress.md
+- Make the safest/most reversible choice and keep going
+- Skip to the next task if truly blocked, and note the issue for the completion report
+- Unresolved items are surfaced in the completion report under "Human Action Required" — not mid-run
 
 ### Context Management
 
@@ -143,8 +157,8 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Write a checkpoint when you receive system warnings about context limits OR notice message compression happening. As a safety net, also checkpoint at least every 3 tasks. Always leave enough room to write a useful checkpoint.
 - Steps when checkpointing:
   1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/progress.md`
-  2. The system will automatically compress earlier messages as context gets high. You cannot invoke `/compact` — it is a user-only command. Continue working after writing the checkpoint.
-  4. After compacting, read back both `plan.md` and `progress.md` from the run subfolder to reload state
+  2. The system will automatically compress earlier messages as context gets high. Continue working after writing the checkpoint.
+  3. After compression, read back both `plan.md` and `progress.md` from the run subfolder to reload state
 - The progress file is append-only — add new sections on each checkpoint, don't overwrite
 
 Progress checkpoint format:
@@ -152,7 +166,7 @@ Progress checkpoint format:
 ```markdown
 # Autonomous Run {NNN} — Progress
 
-## Checkpoint {timestamp}
+## Checkpoint {YYYY-MM-DD HH:MM}
 - **Tasks completed**: {list task numbers and brief status}
 - **Current task**: {task number and what's been done so far}
 - **Tasks remaining**: {list task numbers}
@@ -223,7 +237,7 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - ALWAYS complete Phase 1 and 2 interactively — never skip straight to execution
 - ALWAYS wait for explicit approval before executing
 - ALWAYS save the plan before starting execution
-- ALWAYS ask Nate to run `/compact` before execution begins — this is the last interactive step before he walks away
+- ALWAYS save plan.md and initial progress.md entry before execution begins
 - ALWAYS commit and push after each meaningful chunk
 - ALWAYS produce a completion report, even if all tasks failed
 - NEVER trigger permission prompts that would block unattended execution
@@ -237,3 +251,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - **2026-03-05**: Review fixes — compact fallback, checkpoint heuristic, guardrail tightening, subfolder structure, AskUserQuestion for approval
 - **2026-03-05**: Strengthened autonomous execution — Phase 1 now identifies all decision points upfront, Phase 2 plan includes pre-resolved decisions, Phase 4 guardrail makes plan decisions binding (never ask user during execution)
 - **2026-03-05**: Fixed compaction — assistant cannot invoke /compact, so it's now a user step at the Phase 2→4 handoff. Context Management during execution relies on automatic compression + checkpoints.
+- **2026-03-07**: Post-run-001 improvements — removed /compact dependency (disk-persist approach), added Pre-resolved Decisions to plan template, clarified ~/.claude/ guardrail (scope to project dir), sub-skill prompt review in Phase 1, test-then-batch for sub-agents, inline sub-agent guardrails, slug format spec, checkpoint timestamp format, push-through-when-stuck policy
