@@ -13,11 +13,12 @@ You have been invoked as `/research`. Your job is to perform deep, parallel rese
 Parse `$ARGUMENTS` to determine mode and topics:
 
 - **Quick mode**: starts with `--quick` → spawn only 2 agents, faster scan
+- **No-prompt mode**: starts with `--no-prompt` → skips interactive prompts, uses overwrite as default
 - **Single topic**: e.g. `/research best ClickBank niches 2026`
 - **Multi-topic batch**: e.g. `/research topic one | topic two` (pipe-delimited)
-- **Append mode**: if a report for the same topic-slug already exists in `research/`, note this. After generating the new report, ask the user whether to overwrite or append new findings to the existing file.
+- **Append mode**: if a report for the same topic-slug already exists in `research/`, note this. After generating the new report, ask the user whether to overwrite or append new findings to the existing file (unless `--no-prompt` is set).
 
-Split on `|` and trim whitespace. Each segment is one research topic. Strip `--quick` flag before processing topic text.
+Split on `|` and trim whitespace. Each segment is one research topic. Strip `--quick` and `--no-prompt` flags before processing topic text.
 
 If all segments after splitting are fewer than 3 words each, treat the entire input as a single topic.
 
@@ -181,11 +182,13 @@ Save each report to: `~/projects/Agent/research/{YYYY-MM-DD}_{topic-slug}.md`
 
 Slugify the topic: lowercase, replace spaces with hyphens, remove special characters, truncate to ~50 chars.
 
-If a file with the same slug already exists for today's date, append `-2` (or `-3`, etc.) to the slug before checking for append mode.
-
-**Append mode**: If a file with the same slug already exists, tell the user and ask whether to:
-- **Overwrite**: replace the old report entirely
-- **Append**: add a `---` separator and append the new findings below the old report with a dated header
+**Before writing**, check if a file with the same slug already exists:
+1. If no existing file → write normally
+2. If existing file found AND `--no-prompt` was set → overwrite automatically
+3. If existing file found AND no `--no-prompt` → ask the user:
+   - **Overwrite**: replace the old report entirely
+   - **Append**: add a `---` separator and append the new findings below the old report with a dated header
+   - **New file**: add `-2` (or `-3`, etc.) suffix to the slug and save as a new file
 
 ## Step 6: Print Summary
 

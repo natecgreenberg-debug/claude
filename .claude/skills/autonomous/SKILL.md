@@ -90,7 +90,7 @@ This run follows the embedded guardrails in the /autonomous skill.
    ```
    Plan saved to: autonomous_runs/{NNN}_{slug}/plan.md
 
-   Ready for autonomous execution. Say "go" to start (run `/compact` first if you want to free up context).
+   Ready for autonomous execution. Say "go" to start.
    ```
 4. **WAIT for Nate to respond.** Do not proceed until he confirms.
 5. Enter autonomous execution mode — Nate is now AFK
@@ -99,6 +99,8 @@ This run follows the embedded guardrails in the /autonomous skill.
 
 ### Work Rules
 
+- First action: read plan.md and progress.md from disk to ensure full context loaded
+- Second action: record current commit hash (`git rev-parse HEAD`) in progress.md as starting point
 - Execute tasks from the plan in order, respecting dependency chains
 - Commit after each meaningful chunk of work
 - Push after every commit — push approval is implicitly granted by the approved plan
@@ -112,6 +114,7 @@ This run follows the embedded guardrails in the /autonomous skill.
   - Do NOT run `apt`, `apt-get`, or `rm -rf`
   - Do NOT ask the user questions — follow the brief and return results
   - Do NOT access external services (GitHub API, Slack, etc.)
+  - Note: Brief guardrails are advisory. For hard enforcement, define agents with restricted `tools` field in `.claude/agents/` (see code-reviewer.md). For autonomous workers, consider `permissionMode: dontAsk`.
 
 ### Autonomy Guardrails
 
@@ -124,6 +127,7 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Unsafe: `grep -r "foo" /root/`, `find /root/ ...`, `Glob("**/*.md", path="/root/")`
 - Safe: `grep -r "foo" ~/projects/Agent/`, `Glob("**/*.md", path="/root/projects/Agent/")`
 - If you need config info, check project memory files in `~/projects/Agent/` instead
+- Exception: `~/.claude/projects/-root-projects-Agent/memory/MEMORY.md` may be read/written during Phase 5 for durable learnings.
 
 **Never run hook-triggering commands:**
 - No `apt` or `apt-get` (any subcommand)
@@ -133,14 +137,14 @@ These rules prevent triggering permission prompts that would block unattended ex
 **The approved plan is law — NEVER ask the user during execution:**
 - When a sub-skill, tool, or workflow says "ask the user" or "prompt for input", DO NOT. The plan has already decided. Follow the pre-resolved decision from the plan.
 - Examples: if the plan says "overwrite", overwrite without asking. If the plan says "use option X", use it. If the plan says "skip tests", skip them.
-- If you hit a decision point that genuinely was NOT covered by the plan and cannot be reasonably inferred, log it in progress.md, make the safest/most reversible choice, and keep going. Do not stop execution.
+- If you hit a decision point that genuinely was NOT covered by the plan and cannot be reasonably inferred, log it in progress.md, follow this priority: skip > create new file > modify existing > never delete. Prefer no-ops over actions, and keep going. Do not stop execution.
 - The entire point of Phases 1-2 is to front-load every decision. If you're tempted to ask during Phase 4, something went wrong in planning — but the answer is still to keep going, not to block.
 
-**Never do things that need human judgment:**
+**File and scope constraints:**
+- ONLY create/modify files within `~/projects/Agent/`. Exception: MEMORY.md path above. System paths never modified.
+- Never delete files in `.claude/` — modify in place, never delete and recreate.
 - Do NOT create or comment on GitHub issues/PRs
 - Do NOT send messages to external services (Slack, email, webhooks)
-- Do NOT delete files outside the project directory
-- Do NOT modify system configuration files (`/etc/`, systemd units, cron)
 
 **When stuck:**
 - Do NOT retry the same failing action in a loop
@@ -154,7 +158,7 @@ These rules prevent triggering permission prompts that would block unattended ex
 ### Context Management
 
 - Monitor context usage throughout execution
-- Write a checkpoint when you receive system warnings about context limits OR notice message compression happening. As a safety net, also checkpoint at least every 3 tasks. Always leave enough room to write a useful checkpoint.
+- Write checkpoint BEFORE starting each task. Also checkpoint on compression warnings. Always leave enough room to write a useful checkpoint.
 - Steps when checkpointing:
   1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/progress.md`
   2. The system will automatically compress earlier messages as context gets high. Continue working after writing the checkpoint.
@@ -214,7 +218,7 @@ When all tasks are done or no more progress can be made:
 - {problem}: {how it was resolved, or why it couldn't be}
 
 ## Git Log
-{output of `git log --oneline -N` covering this run's commits}
+{output of `git log --oneline {starting_commit_hash}..HEAD` covering this run's commits}
 ```
 
 2. Commit and push the completion report

@@ -141,6 +141,7 @@ Two separate commits if there are uncommitted changes:
 
 1. **First commit (if needed)**: Check `git status` for uncommitted changes. If any exist:
    - Stage with `cd ~/projects/Agent && git add -A` (`.gitignore` handles exclusions — verify `.env` is gitignored)
+   - Safety check: run `git diff --cached --name-only` and scan for files containing `credentials`, `token`, `secret`, `auth`, `password`, `.pem`, `.key`, or `id_rsa` in their path. If found, run `git reset HEAD <file>` to unstage each match and warn the user.
    - Commit with message: `wip: uncommitted changes before context dump {NNN}`
 2. **Second commit**: Stage the new context dump file and handoff file:
    - `cd ~/projects/Agent && git add context_dumps/{filename} handoff.md`
