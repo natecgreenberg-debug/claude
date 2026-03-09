@@ -35,6 +35,9 @@ Every task follows this pattern. No exceptions.
 - Only implement something from research if the user explicitly requests it
 - Do not treat research recommendations as pending work
 
+## Background Work
+When Nate asks you to run something "in the background" or says he wants to keep chatting, wrap the **entire pipeline** — orchestration, sub-tasks, grading, committing — in a single top-level background agent. Don't just background the leaf-node agents while keeping the main thread busy orchestrating. The goal is to free up the conversation so Nate can talk to you about other things while the work runs.
+
 ## Git Habits
 - Commit early, commit often
 - Always `git push` after committing — never leave unpushed commits

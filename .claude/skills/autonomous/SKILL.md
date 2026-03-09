@@ -106,6 +106,7 @@ This run follows the embedded guardrails in the /autonomous skill.
 - Push after every commit — push approval is implicitly granted by the approved plan
 - Follow all existing project rules (workflow.md, code-style.md)
 - The Phase 2 plan approval serves as blanket approval for all tasks in the plan. Do not pause for per-task approval — the approval rule in workflow.md is satisfied by Phase 2.
+- **Background orchestration**: When the user asks for work to run in the background, the entire execution pipeline (not just leaf-node agents) must run as a single background agent. The main thread stays free for conversation.
 - Use sub-agents for expensive operations (research, code review)
 - When a task relies on sub-agent output quality, run a single test agent first and evaluate output before launching the full batch. If quality is insufficient, improve the agent brief before proceeding.
 - **Agent timeout protocol** (hard 10-minute max): Every background agent gets a 10-minute hard timeout. Poll with `TaskOutput` every 60 seconds. If an agent hasn't returned after 10 minutes, log it as `TIMED OUT` in progress.md and move on — do NOT retry. Early exit: if N-1 of N parallel agents are done and the straggler has run >5 minutes, move on without it. See `references/agent-timeout-protocol.md` for the full polling procedure.
