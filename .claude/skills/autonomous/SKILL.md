@@ -27,7 +27,7 @@ You have been invoked as `/autonomous`. Your job is to understand what Nate want
 1. Write a detailed execution plan covering:
    - **Numbered task list** with clear deliverables per task
    - **Files to create/modify** for each task
-   - **Dependencies** between tasks (what must happen in order)
+   - **Dependencies** between tasks (what must happen in order). Explicitly mark independent tasks with `Depends on: none` — these will be executed in parallel during Phase 4.
    - **Pre-resolved decisions**: Every decision point identified in Phase 1 must have an explicit answer in the plan (e.g., "If append mode triggers, overwrite." / "If tests fail, skip and log." / "Use option X, not Y."). These are binding during execution.
    - **Known blockers** that will need human action (flagged early so Nate can unblock before leaving)
    - **Success criteria** for each task
@@ -108,6 +108,8 @@ This run follows the embedded guardrails in the /autonomous skill.
 - The Phase 2 plan approval serves as blanket approval for all tasks in the plan. Do not pause for per-task approval — the approval rule in workflow.md is satisfied by Phase 2.
 - Use sub-agents for expensive operations (research, code review)
 - When a task relies on sub-agent output quality, run a single test agent first and evaluate output before launching the full batch. If quality is insufficient, improve the agent brief before proceeding.
+- **Agent timeout protocol** (hard 10-minute max): Every background agent gets a 10-minute hard timeout. Poll with `TaskOutput` every 60 seconds. If an agent hasn't returned after 10 minutes, log it as `TIMED OUT` in progress.md and move on — do NOT retry. Early exit: if N-1 of N parallel agents are done and the straggler has run >5 minutes, move on without it. See `references/agent-timeout-protocol.md` for the full polling procedure.
+- **Parallel task execution**: When plan.md marks tasks as independent (`Depends on: none`), launch them in parallel via background sub-agents — don't run them sequentially. Each parallel agent gets its own progress.md entry and the same 10-minute timeout. Wait for all to complete (or timeout) before moving to dependent tasks.
 - When spawning sub-agents, include these guardrails in their brief:
   - Do NOT search, read, or write inside `~/.claude/`
   - Always scope file searches to the project directory (`~/projects/Agent/`)
@@ -146,23 +148,36 @@ These rules prevent triggering permission prompts that would block unattended ex
 - Do NOT create or comment on GitHub issues/PRs
 - Do NOT send messages to external services (Slack, email, webhooks)
 
-**When stuck:**
-- Do NOT retry the same failing action in a loop
+**Graceful degradation — when a sub-task or sub-agent fails:**
+- Do NOT retry the same failing action in a loop — one attempt is enough
 - Do NOT brute-force past permission prompts
 - Do NOT stop to ask the user — push through as much as possible
-- Log what you were trying to do and why it failed in progress.md
+- **Document the gap**: Log a structured error entry in progress.md (see Error Logging below), then continue
 - Make the safest/most reversible choice and keep going
 - Skip to the next task if truly blocked, and note the issue for the completion report
 - Unresolved items are surfaced in the completion report under "Human Action Required" — not mid-run
 
+**Error logging** — when a task fails, write this structured entry to progress.md:
+```markdown
+## Task {N}: {title} — FAIL
+- **Completed**: {YYYY-MM-DD HH:MM EST}
+- **Attempted**: {what you were trying to do}
+- **Failed**: {what went wrong — error message, permission denied, timeout, etc.}
+- **Impact**: {what output is missing because of this failure}
+- **Manual retry**: {enough context for Nate to retry manually — command, file, API, etc.}
+```
+The completion report must include a **"Failed Tasks"** section with this same detail so nothing is lost.
+
 ### Context Management
 
-- Monitor context usage throughout execution
+- **Context conservation**: Never read entire large documents. Read the first 50 lines for structure, then use `offset`/`limit` to target specific sections. When delegating to sub-agents, give them specific questions — don't pass raw documents.
+- Monitor context usage throughout execution.
 - Write checkpoint BEFORE starting each task. Also checkpoint on compression warnings. Always leave enough room to write a useful checkpoint.
 - Steps when checkpointing:
   1. Write a progress checkpoint to `~/projects/Agent/autonomous_runs/{NNN}_{slug}/progress.md`
   2. The system will automatically compress earlier messages as context gets high. Continue working after writing the checkpoint.
   3. After compression, read back both `plan.md` and `progress.md` from the run subfolder to reload state
+- **Auto-compact triggers**: Proactively monitor for signs of high context usage — large tool outputs, many files read, multiple sub-agent results accumulated. When context feels heavy (responses slow, many large outputs in history), write a checkpoint to progress.md immediately, then continue working. The system will automatically compress earlier messages. After compression, re-read `plan.md` and `progress.md` to restore state before continuing. Don't wait for the system to force compression — be proactive.
 - The progress file is append-only — add new sections on each checkpoint, don't overwrite
 
 Progress checkpoint format:
@@ -178,11 +193,23 @@ Progress checkpoint format:
 - **Files modified since last checkpoint**: {list}
 ```
 
+**Task completion entry** (mandatory after every task — separate from checkpoints):
+
+```markdown
+## Task {N}: {title} — {PASS|FAIL|PARTIAL}
+- **Completed**: {YYYY-MM-DD HH:MM EST}
+- **Files**: {list of files created/modified}
+- **Commit**: {short hash from `git rev-parse --short HEAD`}
+- **Issues**: {any problems encountered, or "None"}
+```
+
 ### Git Strategy
 
-- Commit early and often with descriptive messages
-- Push after every commit — never leave unpushed commits
-- Use `type: description` format (e.g., `feat: add user auth module`, `fix: handle empty response`)
+- **Commit after EVERY completed task** — not batched at the end. Each task's output should be committed and pushed before starting the next task.
+- Stage specific files only (`git add <file1> <file2>`) — never use `git add -A` or `git add .`, which can accidentally include secrets or junk files.
+- **Secret scan before commit**: After staging, check `git diff --staged` for credentials, API keys, tokens, or secrets (patterns: `API_KEY=`, `sk-`, `token=`, `password=`, `secret=`). If found, unstage the file, move the secret to `.env`, and log a warning in progress.md.
+- Push after every commit — never leave unpushed commits.
+- Use `type: description` format (e.g., `feat: add user auth module`, `fix: handle empty response`, `wip: partial task 3`).
 
 ## Phase 5: Complete (autonomous — produces report)
 
@@ -209,6 +236,12 @@ When all tasks are done or no more progress can be made:
 | File | Action | Description |
 |------|--------|-------------|
 | `path/to/file` | Created/Modified/Deleted | {what it does} |
+
+## Failed Tasks
+| # | Task | What Failed | Manual Retry |
+|---|------|-------------|--------------|
+| {N} | {title} | {error/reason} | {command or steps to retry} |
+{or "None — all tasks passed."}
 
 ## Human Action Required
 - [ ] {thing Nate needs to do manually — package installs, config reviews, external service setup, etc.}
@@ -256,3 +289,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - **2026-03-05**: Strengthened autonomous execution — Phase 1 now identifies all decision points upfront, Phase 2 plan includes pre-resolved decisions, Phase 4 guardrail makes plan decisions binding (never ask user during execution)
 - **2026-03-05**: Fixed compaction — assistant cannot invoke /compact, so it's now a user step at the Phase 2→4 handoff. Context Management during execution relies on automatic compression + checkpoints.
 - **2026-03-07**: Post-run-001 improvements — removed /compact dependency (disk-persist approach), added Pre-resolved Decisions to plan template, clarified ~/.claude/ guardrail (scope to project dir), sub-skill prompt review in Phase 1, test-then-batch for sub-agents, inline sub-agent guardrails, slug format spec, checkpoint timestamp format, push-through-when-stuck policy
+- **2026-03-09**: Post-run-002 fixes (8 total) — agent timeout protocol (10-min hard max + polling), incremental commits after every task (not batched), secret scan before commit, real-time progress.md with structured task entries, context conservation (targeted reads, never full large docs), graceful degradation (document gap + continue), structured error logging with manual retry guidance, parallel task execution for independent tasks, auto-compact triggers (proactive context management), Failed Tasks section in completion report

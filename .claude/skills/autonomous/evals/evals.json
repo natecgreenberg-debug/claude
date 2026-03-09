@@ -1,0 +1,114 @@
+{
+  "skill": "autonomous",
+  "description": "Post-run-002 fixes: timeout, incremental commits, progress tracking, context conservation, graceful degradation, error logging, parallel tasks, auto-compact",
+  "evals": [
+    {
+      "id": "timeout-detection",
+      "description": "Agent exceeds 10 min, should log timeout and continue to next task",
+      "prompt": "You are in Phase 4 executing an autonomous plan. You launched a background research agent 11 minutes ago and it still hasn't returned. What do you do?",
+      "assertions": [
+        "Mentions logging the timeout to progress.md",
+        "Does NOT retry the same agent",
+        "Continues to the next task",
+        "References the 10-minute hard timeout limit",
+        "Treats the timed-out task as a documented gap, not a blocker"
+      ]
+    },
+    {
+      "id": "incremental-commit",
+      "description": "After task completion, should commit and push immediately",
+      "prompt": "You just finished Task 3 of an autonomous run — you created two new files and modified one existing file. What are your next steps before starting Task 4?",
+      "assertions": [
+        "Commits the changes immediately (not batched at end)",
+        "Pushes after committing",
+        "Stages specific files (not git add -A or git add .)",
+        "Uses a descriptive commit message with type prefix (feat:/fix:/docs:/wip:)",
+        "Updates progress.md with Task 3 results before moving on"
+      ]
+    },
+    {
+      "id": "progress-update",
+      "description": "After task completion, should append structured entry to progress.md",
+      "prompt": "Task 5 just completed successfully — you created research/analysis.md and modified projects/config.json. What do you write to progress.md?",
+      "assertions": [
+        "Includes task status (PASS/FAIL/PARTIAL)",
+        "Includes timestamp in EST",
+        "Lists files created or modified",
+        "Includes the commit hash from the task's commit",
+        "Entry is appended (not overwriting previous entries)"
+      ]
+    },
+    {
+      "id": "context-conservation",
+      "description": "Large document should be read with targeted offset/limit, not fully",
+      "prompt": "Task 7 requires analyzing a 2000-line research document at research/big-report.md to extract the 'Recommendations' section. How do you approach reading this file?",
+      "assertions": [
+        "Does NOT read the entire 2000-line file at once",
+        "Reads first ~50 lines to understand structure",
+        "Uses offset/limit to target the specific section needed",
+        "Mentions context conservation as the reason",
+        "If delegating to a sub-agent, gives specific questions rather than the full document"
+      ]
+    },
+    {
+      "id": "secret-scan",
+      "description": "Staged file contains API key, should unstage and warn",
+      "prompt": "You're about to commit after Task 2. You run git diff --staged and notice one of the files contains the line: API_KEY=sk-proj-abc123def456. What do you do?",
+      "assertions": [
+        "Does NOT commit the file with the secret",
+        "Unstages or removes the secret from the file",
+        "Logs a warning about the detected secret",
+        "Moves the secret to .env or removes it entirely",
+        "Proceeds with the commit only after the secret is removed"
+      ]
+    },
+    {
+      "id": "graceful-degradation",
+      "description": "Sub-agent fails, should log the gap and continue",
+      "prompt": "During Task 4 of an autonomous run, you launched a sub-agent to research competitor pricing. The agent returned an error: 'WebSearch permission denied.' What do you do?",
+      "assertions": [
+        "Does NOT retry the same failing operation in a loop",
+        "Logs the failure and what information is missing",
+        "Continues to the next task or completes what's possible",
+        "Documents the gap for the completion report",
+        "Does NOT stop execution or ask the user"
+      ]
+    },
+    {
+      "id": "error-logging",
+      "description": "Task fails, should produce structured error log with retry guidance",
+      "prompt": "Task 6 failed — you were trying to create a Python script that calls an external API, but the API returned 403 Forbidden on every attempt. How do you log this failure?",
+      "assertions": [
+        "Records what was attempted (the specific task and action)",
+        "Records what failed (API returned 403)",
+        "Includes enough detail for manual retry",
+        "Logs this in progress.md with structured format",
+        "The completion report will include this in a Failed Tasks section"
+      ]
+    },
+    {
+      "id": "parallel-tasks",
+      "description": "Two independent tasks in plan should be launched in parallel",
+      "prompt": "You're reading plan.md and see: Task 3 depends on Task 2, but Task 4 and Task 5 have 'Depends on: none' and are both ready. How do you execute them?",
+      "assertions": [
+        "Launches Task 4 and Task 5 in parallel (not sequentially)",
+        "Each parallel task gets its own progress.md entry",
+        "Applies the 10-minute timeout to each parallel agent",
+        "Waits for both to complete (or timeout) before moving to dependent tasks",
+        "Does NOT launch Task 3 until Task 2 is done"
+      ]
+    },
+    {
+      "id": "auto-compact",
+      "description": "Context is high after reading many files, should proactively compact",
+      "prompt": "You're midway through Task 8 of a 10-task autonomous run. You've read 15 files, launched 6 sub-agents, and the tool outputs have been very large. You notice responses are getting slower and context feels heavy. What do you do?",
+      "assertions": [
+        "Writes a checkpoint to progress.md BEFORE any compaction",
+        "Proactively manages context rather than waiting for system-forced compression",
+        "After compression, re-reads plan.md and progress.md to restore state",
+        "The checkpoint includes current task status and remaining tasks",
+        "Continues execution after restoring context"
+      ]
+    }
+  ]
+}
