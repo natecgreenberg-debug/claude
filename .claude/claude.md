@@ -22,6 +22,7 @@
 - Nate does both long deep sessions and quick bouncing between ideas
 - Commit to git regularly with descriptive messages
 - When Nate makes a correction or shares a helpful note, ask if he wants it added to this `claude.md` file
+- **Background work**: When Nate asks to run something "in the background" so he can keep chatting, wrap the **entire pipeline** (orchestration + sub-tasks + committing) in a single top-level background agent. Don't just background the leaf-node agents while keeping the main thread busy. The goal is to free the conversation.
 - When context gets high, alert the user and suggest running /compact
 - **Session wind-down**: When Nate signals a session is ending (or context is critically high), always: (1) summarize what was done + what's next, (2) write/update a context dump in `context_dumps/`, (3) commit all changes and push to GitHub. The next agent should be able to pick up exactly where we left off.
 - **Session start-up**: On the first message of a new session, suggest running `/startsession` if it hasn't been run yet. Don't run it automatically — just suggest it.
