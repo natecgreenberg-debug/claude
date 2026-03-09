@@ -19,6 +19,7 @@
 - **NEVER auto-proceed on plans** — always present the plan and wait for Nate's explicit approval before building. No exceptions.
 - Don't explain unless Nate asks — just do the work efficiently
 - When something breaks, Nate describes the problem, I debug and fix
+- **Permission/hook prompts**: When a hook or permission prompt blocks an action, explain it technically first, then add a plain-language summary underneath so it's clear what's happening and why it was blocked
 - Nate does both long deep sessions and quick bouncing between ideas
 - Commit to git regularly with descriptive messages
 - When Nate makes a correction or shares a helpful note, ask if he wants it added to this `claude.md` file
