@@ -44,6 +44,8 @@
 - **Affiliate**: ClickBank, Amazon Associates
 - **Payments**: Stripe
 - **Design**: Canva
+- **Firecrawl**: Self-hosted on port 3002 — use for all website scraping (converts pages to clean markdown). Call via `curl -X POST http://localhost:3002/v1/scrape -H 'Content-Type: application/json' -d '{"url": "...", "formats": ["markdown"]}'`
+- **Playwright**: Installed with headless Chromium — use for all web page interaction (clicking, filling forms, screenshots, scraping JavaScript-heavy sites). Call via bash scripts, not MCP.
 - API keys stored in `.env` files (never committed to git)
 
 ## Code Standards
