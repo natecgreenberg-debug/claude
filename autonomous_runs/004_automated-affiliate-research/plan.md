@@ -41,6 +41,10 @@
 ### Phase 6: Wrap-up
 - [ ] Completion report
 - [ ] Commit and push all files
+- [ ] Run /winddown skill — context dump + handoff file for next session
+
+## Fallback Rule
+If stuck on ALL planned work → identify highest-value project Nate would benefit from and build that instead. Never stop working — maximize output.
 
 ## Pre-Resolved Decisions
 - If blocked → note it, move on
