@@ -101,6 +101,7 @@ This run follows the embedded guardrails in the /autonomous skill.
 
 - First action: read plan.md and progress.md from disk to ensure full context loaded
 - Second action: record current commit hash (`git rev-parse HEAD`) in progress.md as starting point
+- **HARD REQUIREMENT — progress.md before any agent launch**: Before spawning ANY sub-agents, the orchestrator MUST write a progress.md entry logging: (a) which agents are being launched, (b) their task IDs, (c) expected output files/deliverables. This entry acts as a manifest — if the orchestrator dies, Nate can see exactly what was in flight. Skipping this step is a bug, not an optimization.
 - Execute tasks from the plan in order, respecting dependency chains
 - Commit after each meaningful chunk of work
 - Push after every commit — push approval is implicitly granted by the approved plan
@@ -110,7 +111,11 @@ This run follows the embedded guardrails in the /autonomous skill.
 - Use sub-agents for expensive operations (research, code review)
 - When a task relies on sub-agent output quality, run a single test agent first and evaluate output before launching the full batch. If quality is insufficient, improve the agent brief before proceeding.
 - **Agent timeout protocol** (hard 10-minute max): Every background agent gets a 10-minute hard timeout. Poll with `TaskOutput` every 60 seconds. If an agent hasn't returned after 10 minutes, log it as `TIMED OUT` in progress.md and move on — do NOT retry. Early exit: if N-1 of N parallel agents are done and the straggler has run >5 minutes, move on without it. See `references/agent-timeout-protocol.md` for the full polling procedure.
-- **Parallel task execution**: When plan.md marks tasks as independent (`Depends on: none`), launch them in parallel via background sub-agents — don't run them sequentially. Each parallel agent gets its own progress.md entry and the same 10-minute timeout. Wait for all to complete (or timeout) before moving to dependent tasks.
+- **Parallel task execution (process-as-they-arrive)**: When plan.md marks tasks as independent (`Depends on: none`), launch them in parallel via background sub-agents — don't run them sequentially. Each parallel agent gets its own progress.md entry and the same 10-minute timeout. **Do NOT passively wait for all agents to complete.** Instead, use active polling (`TaskOutput` every 60 seconds) and process results as they arrive:
+  - As each agent returns: (a) immediately commit and push its output, (b) update progress.md with its completion status (PASS/FAIL/PARTIAL), (c) move on to processing the next returned agent
+  - The orchestrator should be DOING work between agent completions (committing, updating progress, staging next steps) — never sitting idle
+  - If N-1 of N agents are done and the straggler exceeds its 10-minute timeout, mark it `TIMED OUT` in progress.md with a structured error entry and proceed to the next phase
+  - Only move to dependent tasks after all parallel agents have returned or timed out
 - When spawning sub-agents, include these guardrails in their brief:
   - Do NOT search, read, or write inside `~/.claude/`
   - Always scope file searches to the project directory (`~/projects/Agent/`)
@@ -207,6 +212,7 @@ Progress checkpoint format:
 ### Git Strategy
 
 - **Commit after EVERY completed task** — not batched at the end. Each task's output should be committed and pushed before starting the next task.
+- **Immediate commit on sub-agent return**: When running parallel sub-agents, do NOT wait for all agents to finish before committing. As EACH sub-agent returns, immediately commit and push its output. This prevents work from being lost if the orchestrator dies mid-batch. The orchestrator should be actively processing results between agent completions, not sitting idle waiting for the batch to complete.
 - Stage specific files only (`git add <file1> <file2>`) — never use `git add -A` or `git add .`, which can accidentally include secrets or junk files.
 - **Secret scan before commit**: After staging, check `git diff --staged` for credentials, API keys, tokens, or secrets (patterns: `API_KEY=`, `sk-`, `token=`, `password=`, `secret=`). If found, unstage the file, move the secret to `.env`, and log a warning in progress.md.
 - Push after every commit — never leave unpushed commits.
@@ -291,3 +297,4 @@ Saved to: `autonomous_runs/{NNN}_{slug}/completion.md`
 - **2026-03-05**: Fixed compaction — assistant cannot invoke /compact, so it's now a user step at the Phase 2→4 handoff. Context Management during execution relies on automatic compression + checkpoints.
 - **2026-03-07**: Post-run-001 improvements — removed /compact dependency (disk-persist approach), added Pre-resolved Decisions to plan template, clarified ~/.claude/ guardrail (scope to project dir), sub-skill prompt review in Phase 1, test-then-batch for sub-agents, inline sub-agent guardrails, slug format spec, checkpoint timestamp format, push-through-when-stuck policy
 - **2026-03-09**: Post-run-002 fixes (8 total) — agent timeout protocol (10-min hard max + polling), incremental commits after every task (not batched), secret scan before commit, real-time progress.md with structured task entries, context conservation (targeted reads, never full large docs), graceful degradation (document gap + continue), structured error logging with manual retry guidance, parallel task execution for independent tasks, auto-compact triggers (proactive context management), Failed Tasks section in completion report
+- **2026-03-10**: Reliability fixes (3) — immediate commit on sub-agent return (don't wait for batch), progress.md manifest required before any agent launch, process-as-they-arrive pattern replaces wait-for-all (active polling + commit between completions)
