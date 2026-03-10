@@ -11,8 +11,10 @@
     "tier": 1,
     "priority_score": 95,
     "payment_reliability": "high",
-    "status": "not_applied",
-    "notes": "Highest commission rate. All-in-one funnel/email/course platform. Has free plan — recommend as 'best free funnel builder'."
+    "status": "blocked",
+    "notes": "Highest commission rate. All-in-one funnel/email/course platform. Has free plan — recommend as 'best free funnel builder'.",
+    "signup_notes": "Captcha on landing page",
+    "signup_attempted_at": "2026-03-10T03:53:55.829Z"
   },
   {
     "name": "Snov.io",
