@@ -1,0 +1,105 @@
+{
+  "type": "comparison",
+  "systemPrompt": "You are a senior software reviewer and digital marketer who has personally used dozens of SaaS tools. You write honest, opinionated comparisons that cut through vendor hype. Your writing style is direct, conversational, and occasionally self-deprecating — you've made expensive mistakes with bad software and you don't want your readers to repeat them. You use concrete numbers, real use-case scenarios, and specific feature callouts instead of vague superlatives. You never say 'leverage,' 'utilize,' or 'robust.' You occasionally include minor criticisms of the product you recommend because that's what builds trust. Your goal is to help the reader make a confident decision, not to push them toward a predetermined choice. That said, you do have a recommended pick at the end — backed by your reasoning.",
+  "structure": {
+    "intro": "Open with the core tension: both tools solve the same problem but make different tradeoffs. State upfront who each tool is best for. Hook with a real scenario the reader likely faces.",
+    "sections": [
+      "tldr-verdict",
+      "quick-comparison-table",
+      "tool-a-overview",
+      "tool-b-overview",
+      "feature-breakdown",
+      "pricing-comparison",
+      "ease-of-use",
+      "integrations",
+      "customer-support",
+      "who-should-choose-each",
+      "final-verdict"
+    ],
+    "conclusion": "Restate the winner and runner-up clearly. Include a direct CTA to try the recommended tool (with affiliate link) and a secondary CTA for the alternative. Add FTC disclosure."
+  },
+  "sections": [
+    {
+      "name": "tldr-verdict",
+      "prompt": "Write a 3-4 sentence TL;DR that names the winner outright, states the one main reason why, and identifies who should pick the other tool instead. Be decisive — readers skimming for a quick answer should leave satisfied. Example format: '[Tool A] wins for most people because [specific reason]. If you're [specific persona/use case], [Tool B] is worth the extra cost. Skip to [section] if you want the full breakdown.'",
+      "wordCount": 80
+    },
+    {
+      "name": "quick-comparison-table",
+      "prompt": "Create a markdown comparison table with these rows: Starting Price, Free Trial, Best For, Ease of Use (1-5 stars), Integrations Count, Customer Support, Standout Feature, Biggest Weakness. Fill in realistic values for {toolA} and {toolB}. Keep cell content terse — one phrase max per cell.",
+      "wordCount": 150
+    },
+    {
+      "name": "tool-a-overview",
+      "prompt": "Write a 150-200 word overview of {toolA}. Cover: what it is, who built it and when, what problem it solves, its primary market position (budget/mid-market/enterprise), and one thing it does better than almost any competitor. Write as if you've used it for at least 6 months. Include one concrete detail that signals insider knowledge (e.g., a specific UI quirk, a hidden feature, a known limitation the vendor doesn't advertise).",
+      "wordCount": 175
+    },
+    {
+      "name": "tool-b-overview",
+      "prompt": "Write a 150-200 word overview of {toolB} using the same format as the {toolA} overview. Be equally honest — if {toolB} has a steeper learning curve or higher price, say so plainly. The reader should feel you've actually used both tools, not just read the marketing pages.",
+      "wordCount": 175
+    },
+    {
+      "name": "feature-breakdown",
+      "prompt": "Compare the core features side by side across 5-7 categories most important to the target user. For each category: name it as a subheading, state which tool wins and why in 2-3 sentences, and note any edge cases where the loser might actually be better. Categories should be specific to the product type, not generic (e.g., for email tools: deliverability, automation workflow builder, segmentation, A/B testing, reporting — not just 'features').",
+      "wordCount": 500
+    },
+    {
+      "name": "pricing-comparison",
+      "prompt": "Break down pricing for both tools at three tiers: solo/starter, small business (2-10 users or equivalent), and scaling (the tier most growing companies end up on). Show the actual monthly cost for each. Call out any gotchas: per-seat fees, feature paywalls, overage charges, annual-only discounts. End with a value assessment: which tool gives more per dollar at each tier.",
+      "wordCount": 250
+    },
+    {
+      "name": "ease-of-use",
+      "prompt": "Describe the onboarding experience and day-to-day UX for both tools. Be specific: how long does initial setup take, what's the learning curve for a non-technical user, does it have a modern interface or feel dated. Include at least one thing that annoyed you about each tool's UX. If one has a significantly better mobile experience or keyboard shortcuts, mention it.",
+      "wordCount": 200
+    },
+    {
+      "name": "integrations",
+      "prompt": "List the most important native integrations each tool offers, then compare their API quality and Zapier/Make availability. For the target use case of this comparison, name the 3-5 integrations that actually matter and state which tool handles them better. Flag any missing integrations that are surprising or frustrating.",
+      "wordCount": 175
+    },
+    {
+      "name": "customer-support",
+      "prompt": "Compare support options: live chat hours, response time benchmarks, quality of knowledge base, community forum activity, onboarding support. If one tool has notably better or worse support, be direct about it. Include any personal experience with their support teams or commonly cited user complaints from review sites like G2 or Capterra.",
+      "wordCount": 150
+    },
+    {
+      "name": "who-should-choose-each",
+      "prompt": "Write two distinct paragraphs. Paragraph 1: exactly who should choose {toolA} — be specific about company size, use case, technical skill level, budget constraints, and growth stage. Paragraph 2: exactly who should choose {toolB} — same specificity. A reader should be able to read one of these and immediately recognize themselves.",
+      "wordCount": 200
+    },
+    {
+      "name": "final-verdict",
+      "prompt": "Deliver your definitive recommendation with confidence. Restate the winner, the runner-up, and the edge case where you'd flip the recommendation. Include a 1-2 sentence CTA to try the winner with a note about their trial offer. Then add the FTC disclosure on a new line. Format: 'Disclosure: This article contains affiliate links. If you purchase through my links, I earn a commission at no extra cost to you. I only recommend tools I've personally evaluated.'",
+      "wordCount": 150
+    }
+  ],
+  "platformAdaptations": {
+    "medium": {
+      "formatting": "Use H2 and H3 headers. Include the comparison table early (readers expect it). Add a 'Member-only' tag section break after the intro to drive follows. Use pull quotes for key stats. Embed affiliate links naturally in context — never in a list of bare URLs.",
+      "length": "2,000–3,500 words. Medium rewards depth. Don't pad, but don't cut the feature breakdown short."
+    },
+    "linkedin": {
+      "formatting": "No headers. Short paragraphs (1-3 lines max). Lead with a strong hook line that works as a preview snippet. Use line breaks aggressively. End with a question to drive comments. One affiliate link in first comment, not in post body.",
+      "length": "300–600 words. Trim to the TL;DR + 2-3 key insights + CTA."
+    },
+    "reddit": {
+      "formatting": "No overt promotion in title. Use markdown for the comparison table. Write in first person with personal experience framing ('I've used both for 8 months, here's what I found'). Affiliate links in comments only, clearly disclosed. Expect skepticism — preemptively address the most common objections.",
+      "length": "800–1,500 words. Reddit rewards thoroughness but punishes fluff. Cut the marketing language entirely."
+    },
+    "quora": {
+      "formatting": "Answer format: direct answer first, then supporting details. Structure as a clear question-answer flow. Use bold for key terms. Include 1 affiliate link max, placed naturally within a recommendation sentence. Must answer the specific question being posed.",
+      "length": "400–800 words. Quora readers want the answer fast, then the supporting rationale."
+    },
+    "blog": {
+      "formatting": "Full SEO optimization: H1 with primary keyword, H2/H3 hierarchy, meta description under 160 chars, internal links to related posts, image alt text placeholders. Add a 'Last Updated' date. Use numbered lists for step-by-step content. CTA buttons described in brackets: [CTA: Try {toolA} Free — Affiliate Link].",
+      "length": "2,500–4,000 words. Target featured snippet for comparison queries. Include FAQ section at end."
+    }
+  },
+  "affiliatePlacement": {
+    "strategy": "Place affiliate links at three natural points: (1) first mention of the recommended tool with a subtle anchor like 'try {toolA}', (2) the pricing section when stating the trial offer, (3) the final verdict CTA. Never cluster links. The comparison table can use a linked 'Get Started' cell. Avoid using the word 'here' as anchor text.",
+    "maxLinks": 4,
+    "disclosure": "Disclosure: This article contains affiliate links. If you sign up through my links, I may earn a commission at no extra cost to you. This doesn't influence my recommendations — I only feature tools I've personally tested and would use myself."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "type": "social-post",
+  "systemPrompt": "You are a practitioner and founder who posts on social media about tools, systems, and strategies that have worked in your business. You are not a marketer posting promotional content — you are someone sharing genuine experience. Your posts read like thoughts from a smart colleague, not copy from an ad. You write short sentences. You use line breaks often. You don't use hashtag spam (1-2 relevant hashtags max). You never start a post with 'I' (LinkedIn algorithm penalizes it). You never use phrases like 'game-changer,' 'game changer,' 'transform your business,' or 'level up.' You ask questions that invite real engagement, not performative ones. When you mention a tool, you say something specific about it — not just its name. You're comfortable admitting things didn't work perfectly. Posts that do well feel like a real person wrote them in 15 minutes, even if they were carefully crafted. Your goal is to drive traffic and affiliate conversions without sounding like that's your goal.",
+  "structure": {
+    "intro": "The hook — first 1-2 lines determine whether anyone reads the rest. On LinkedIn and Quora, only the first 2-3 lines show before 'see more.' Make those lines do real work.",
+    "sections": [
+      "hook",
+      "body",
+      "cta-or-question",
+      "link-placement"
+    ],
+    "conclusion": "On LinkedIn: end with a question or observation that invites comments. On Reddit: end with an honest invitation to share alternatives. On Quora: end with a definitive recommendation."
+  },
+  "sections": [
+    {
+      "name": "hook",
+      "prompt": "Write 3 hook options for this post. Each hook should be 1-2 lines that stop the scroll. Hook formats that work: (A) Counter-intuitive statement ('Most people set up email automation wrong — and it's costing them 40% of their leads'). (B) Specific result with implied method ('Went from 200 to 1,400 email subscribers in 6 weeks. The only thing that changed: this one tool.'). (C) Relatable frustration ('Spent 3 hours trying to set up a Zapier workflow. Then I tried {tool} and did it in 11 minutes.'). Avoid clickbait. The hook should deliver on what the post actually says.",
+      "wordCount": 100
+    },
+    {
+      "name": "body",
+      "prompt": "Write the body of the post. The body expands on the hook with: (1) The specific situation or problem (2-3 lines), (2) What you did or found (3-5 lines, each a single thought), (3) The specific result or insight (1-2 lines). For product-focused posts: mention the tool naturally, include one specific feature or capability that proved the point, and avoid listing generic benefits. Write like you're telling a story to one person, not broadcasting to thousands. Short paragraphs. Plenty of white space.",
+      "wordCount": 150
+    },
+    {
+      "name": "cta-or-question",
+      "prompt": "Write 2 CTA/closing options. Option A: End with a genuine question that invites engagement ('What tool do you use for this? I'm curious if there's something better I'm missing.'). Option B: End with a soft CTA that doesn't feel pushy ('If you want to try it, I'll drop the link in the comments — it has a free plan that covers most use cases.'). For Reddit: always end with Option A and drop the link in a comment reply. For LinkedIn: Option A is safer for organic reach; Option B with link in comments works for warmer audiences.",
+      "wordCount": 75
+    },
+    {
+      "name": "link-placement",
+      "prompt": "Describe where the affiliate link should be placed for this post's platform. Do not include the actual link text in the post body for any platform — always put it in the first comment or a follow-up reply. The post body should reference 'link in comments' or 'I'll drop the link below.' Write a brief comment/reply template that includes the link placeholder [AFFILIATE_LINK] and the FTC disclosure: 'Heads up: this is an affiliate link — I earn a small commission if you sign up, at no cost to you.'",
+      "wordCount": 75
+    }
+  ],
+  "platformAdaptations": {
+    "linkedin": {
+      "formatting": "Never start with 'I.' Use line breaks after every 1-2 sentences. No more than 2 hashtags, placed at the very end. The first 2 lines are everything — they show in the preview before 'see more.' Professional but human tone. Third-person framing ('Most founders...', 'A lot of teams...') works well for hooks. Affiliate link always goes in the first comment, never the post body.",
+      "length": "150–400 words. Sweet spot is around 250 words. Long posts work if every line earns its place."
+    },
+    "reddit": {
+      "formatting": "Title is critical — write 3 title options. Body reads as a genuine community contribution, not a promotional post. First-person experience framing works best ('I tried X for 60 days, here's what actually happened'). No affiliate links in the post body ever. Post the link in a comment reply to your own post, clearly disclosed. Engage with commenters — Reddit rewards posts where the OP responds.",
+      "length": "300–800 words. Length depends on subreddit norms. Technical subreddits reward detail; general subreddits prefer brevity."
+    },
+    "quora": {
+      "formatting": "Answer a specific question comprehensively. Don't just post a teaser and link out. Lead with the direct answer. Use bold for key terms. One affiliate link max, placed as a natural recommendation ('I've been using [tool] for this — here's the link if you want to check it out'). Disclosure at the end: 'Disclosure: affiliate link above.'",
+      "length": "400–900 words. Quora answers that rank well are substantive. Don't chase brevity at the expense of usefulness."
+    },
+    "medium": {
+      "formatting": "Social posts don't belong on Medium as standalone pieces — use this template's content as a teaser/excerpt to embed in longer Medium articles, or as a 'Short Take' post in a publication that accepts them. If posting as a standalone Short Take, add 1-2 additional paragraphs of context.",
+      "length": "300–600 words for a Short Take. Otherwise embed in a larger piece."
+    },
+    "blog": {
+      "formatting": "Social post content can be repurposed as a blog intro or sidebar callout. Not typically a standalone blog post format. Use as a 'quick take' box within a larger review or comparison post.",
+      "length": "100–200 words as a callout box or intro hook."
+    }
+  },
+  "affiliatePlacement": {
+    "strategy": "Social posts never include affiliate links in the body text. All affiliate links go in the first comment (LinkedIn, Facebook), as a reply to your own post (Reddit), or within the answer body with explicit disclosure (Quora, only if allowed by subreddit/space rules). The post body should hint that a link is available ('I'll drop the link below') without being pushy. The comment with the link should be friendly and add value — not just a bare URL.",
+    "maxLinks": 1,
+    "disclosure": "For comment/reply placement: 'Heads up — this is an affiliate link. If you sign up through it, I earn a small commission at no cost to you. Happy to answer questions about my experience with it.' For Quora in-body: append '(affiliate link)' immediately after the hyperlink."
+  }
+}

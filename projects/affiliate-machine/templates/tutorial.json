@@ -1,0 +1,75 @@
+{
+  "type": "tutorial",
+  "systemPrompt": "You are a practitioner-writer: someone who actually does the thing they're teaching, not a generalist who researches topics for content. Your tutorials are written for people who want to follow along and get a working result, not just understand the concept. You write in second-person ('you'll see,' 'click the dropdown') and use imperative mood for steps ('Click Save,' 'Paste your API key here'). You include the details that other tutorials skip: what to do when a step doesn't work as expected, what common mistakes look like, and which settings you can skip vs. which ones matter. You recommend specific tools when there's a clear best option — and you explain why you chose that tool, not just that you're using it. You use numbered steps for sequences and bullets for options/alternatives. Screenshots are described in brackets as placeholders. You're friendly but efficient: no filler, no padding, no 'great question!' energy.",
+  "structure": {
+    "intro": "Open with the problem this tutorial solves and the specific outcome the reader will achieve by the end. State the time commitment, skill level required, and tools/accounts needed upfront. If there are prerequisites, list them clearly so readers don't hit a wall mid-tutorial.",
+    "sections": [
+      "what-youll-build",
+      "prerequisites",
+      "step-by-step",
+      "troubleshooting",
+      "optimization-tips",
+      "next-steps"
+    ],
+    "conclusion": "Confirm what the reader has accomplished. Point to the next logical tutorial or more advanced use case. Add CTA for any tools used (with affiliate links). FTC disclosure."
+  },
+  "sections": [
+    {
+      "name": "what-youll-build",
+      "prompt": "Describe the end result in concrete terms: what will exist, what it will do, and what success looks like. Include a brief 'why this matters' — what problem does this solve and how much time/money/effort does the solution save? Be specific: 'You'll set up an automated email sequence that sends 5 emails over 7 days, fires when someone joins your list, and tracks opens and clicks' is better than 'You'll learn email automation.' If there's a screenshot or demo, describe it in brackets as [Screenshot: completed automation workflow showing 5 emails and trigger logic].",
+      "wordCount": 150
+    },
+    {
+      "name": "prerequisites",
+      "prompt": "List everything the reader needs before starting: accounts (free or paid), tools installed, existing knowledge, files or data needed. For each required account or tool, include a brief note on how to get it and approximate cost if any. Mark items as Required vs. Optional. If a free tier is sufficient, say so explicitly. If the tutorial requires a paid plan, say that too — don't bury it mid-tutorial.",
+      "wordCount": 150
+    },
+    {
+      "name": "step-by-step",
+      "prompt": "Write the full tutorial as numbered steps. Each step should: (1) Start with an action verb ('Click,' 'Enter,' 'Navigate to,' 'Copy'). (2) Be specific enough that the reader doesn't have to guess what to click. (3) Include a note in italics for anything that varies by account or version. (4) Add a [Screenshot: description] placeholder after steps where a visual would prevent confusion. (5) Group related steps under H3 subheadings if there are natural phases (e.g., 'Phase 1: Account Setup,' 'Phase 2: Configure Your First Automation'). Where a specific tool or service is recommended within the steps, name it and explain the choice briefly — include affiliate link placeholder as [AFFILIATE: {tool name}].",
+      "wordCount": 800
+    },
+    {
+      "name": "troubleshooting",
+      "prompt": "List 4-6 common errors or points of confusion, each formatted as: **Problem:** [what the reader sees] **Cause:** [why this happens] **Fix:** [exactly what to do]. Draw from real friction points in the workflow — the steps most likely to fail, the settings most commonly misconfigured, and the errors that look scarier than they are. Be specific about error messages where relevant.",
+      "wordCount": 250
+    },
+    {
+      "name": "optimization-tips",
+      "prompt": "Once the basic setup is working, what 3-5 things can the reader do to get more out of it? These should be concrete improvements with measurable impact: 'Add a second trigger condition to reduce false positives' or 'Enable double opt-in to improve deliverability rates by ~15%.' Each tip should be actionable in under 10 minutes. If a tip requires a paid plan upgrade, note that.",
+      "wordCount": 200
+    },
+    {
+      "name": "next-steps",
+      "prompt": "Point to the logical next thing to learn or build. Suggest 2-3 follow-on tutorials or resources. If there's a more advanced version of what was built, briefly describe it and tease a follow-up post. Include one affiliate CTA for the primary tool used in the tutorial, framed as 'if you haven't already, grab a free trial of {tool} here.' End with the FTC disclosure: 'Disclosure: This tutorial contains affiliate links. If you sign up for recommended tools through my links, I earn a commission at no extra cost to you. I only recommend tools I use and trust.'",
+      "wordCount": 150
+    }
+  ],
+  "platformAdaptations": {
+    "medium": {
+      "formatting": "Use H2 for major phases, H3 for sub-steps. Number steps clearly. Use code blocks for any values the reader needs to copy-paste exactly. Callout boxes (blockquotes) for warnings and tips. Embed affiliate CTAs naturally in context — at first mention of the recommended tool and in the next-steps section.",
+      "length": "2,000–3,500 words depending on tutorial complexity. Don't truncate steps to hit a word count — reader completion matters more."
+    },
+    "linkedin": {
+      "formatting": "Turn the tutorial into a 5-step framework post. Lead with the result ('Here's how I built X in 20 minutes'). Use numbered list format. Each step is one tight paragraph. End with: 'Full step-by-step with screenshots in the comments.' Affiliate link in first comment with disclosure.",
+      "length": "400–600 words. Framework overview only — not full tutorial."
+    },
+    "reddit": {
+      "formatting": "Full tutorial format works on Reddit if it's genuinely useful. Title: 'How to [specific result] with [tool] — step by step (with the mistakes I made).' Include the troubleshooting section prominently — Reddit appreciates honesty about failure modes. Affiliate links in comments only with clear disclosure.",
+      "length": "1,500–3,000 words. Full tutorial is fine; Reddit rewards thoroughness for how-to content."
+    },
+    "quora": {
+      "formatting": "Answer the 'How do I [task]?' question. Give a condensed version of the step-by-step (5-8 key steps). Mention the recommended tool naturally within the steps. One affiliate link max embedded as a recommendation. Link to the full tutorial at the end.",
+      "length": "600–1,000 words. Enough to actually answer the question, not just tease the full guide."
+    },
+    "blog": {
+      "formatting": "Full SEO treatment: target 'how to [task] with [tool]' as primary keyword. Add table of contents with anchor links. Use a 'Quick Summary' box at the top for skimmers. Include [Screenshot] placeholders that your virtual assistant or AI image generator should fill. FAQ section at the end targeting related queries. Schema markup placeholder for HowTo structured data.",
+      "length": "2,500–5,000 words. The more comprehensive the tutorial, the better it ranks and the longer visitors stay."
+    }
+  },
+  "affiliatePlacement": {
+    "strategy": "Affiliate links belong at natural decision points: (1) Prerequisites section — when listing required tools, link to the recommended one. (2) Within the steps — when the reader first needs to use the tool (e.g., 'Log into your {tool} dashboard [AFFILIATE]'). (3) Optimization tips — if an upgrade unlocks a tip. (4) Next-steps CTA. Do not link every mention of the tool — pick the moments where the reader is actively making a decision.",
+    "maxLinks": 3,
+    "disclosure": "Disclosure: This tutorial contains affiliate links. If you sign up for tools through my links, I earn a commission at no extra cost to you. I only recommend tools I personally use, and my recommendations aren't influenced by affiliate relationships."
+  }
+}
