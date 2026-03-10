@@ -74,13 +74,14 @@
 ## Sub-Agents Available
 - **code-reviewer**: Zero-context code review, objective and unbiased, returns only specific actionable changes
 
-## Current Direction: Recurring SaaS Affiliate Pipeline
-Primary focus is building a $1,000+/mo recurring income stream through SaaS affiliate marketing using free traffic methods.
+## Current Direction: Automated Affiliate Machine
+$10K MRR target via fully autonomous agent systems running 24/7 — no human content review.
 
-- **Workspace**: `projects/affiliate-machine/` — programs, keywords, n8n workflows, content calendar
-- **Research**: `research/deep-research/2026-03-10_*.md` — 9 reports including master operational playbook
-- **Programs**: 24 SaaS affiliate programs in 3 tiers (easy → moderate → hard approval)
-- **Platforms**: LinkedIn (primary), Reddit, YouTube faceless, Medium, Quora, TikTok/Instagram
-- **Milestones**: First Sale (Month 2-3) → $100/mo (Month 4-6) → $1,000/mo (Month 12-18)
-- **Tech stack**: Claude (content), n8n (automation), Shlink (link tracking), GA4 (analytics) — all $0
+- **Workspace**: `projects/affiliate-machine/`
+- **Multi-account scaling**: GoLogin (free tier → paid later), accounts are expendable
+- **All viable platforms**: Not limited to specific 5 — explore everything that converts for automated affiliate
+- **Offer mix**: Recurring SaaS + high-ticket SaaS + ClickBank + Amazon Associates
+- **Full autopilot**: Agents create content, post across platforms, manage accounts autonomously
+- **No cold email** (too expensive) — volume approach via automated posting
+- **Tech stack**: Playwright (browser automation), n8n (orchestration), Firecrawl (scraping), OpenRouter (content gen), Shlink (link tracking) — all self-hosted/$0
 
