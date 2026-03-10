@@ -1,0 +1,36 @@
+{
+  "platform": "mangools",
+  "name": "Mangools",
+  "signup_url": "https://mangools.com/affiliates",
+  "steps": [
+    { "action": "navigate", "url": "https://mangools.com/affiliates" },
+    { "action": "screenshot", "name": "landing" },
+    {
+      "action": "click",
+      "selector": "a:has-text('Join'), a:has-text('Become an affiliate'), a:has-text('Sign up'), a:has-text('Get started'), button:has-text('Join'), a[href*='signup'], a[href*='register'], a[href*='affiliate']",
+      "optional": true,
+      "wait_for_nav": true
+    },
+    { "action": "screenshot", "name": "after_cta" },
+    {
+      "action": "fill",
+      "selector": "input[name='email'], input[type='email'], input[id='email'], input[placeholder*='email' i]",
+      "value": "{email}"
+    },
+    {
+      "action": "fill",
+      "selector": "input[name='password'], input[type='password'], input[id='password']",
+      "value": "{password}",
+      "optional": true
+    },
+    { "action": "screenshot", "name": "filled_form" },
+    {
+      "action": "click",
+      "selector": "button[type='submit'], input[type='submit'], button:has-text('Create account'), button:has-text('Sign up'), button:has-text('Register'), [type='submit']"
+    },
+    { "action": "wait", "ms": 3000 },
+    { "action": "screenshot", "name": "result" },
+    { "action": "check_captcha" },
+    { "action": "check_success", "indicators": ["dashboard", "welcome", "affiliate", "commission", "verify your email", "confirm your email"] }
+  ]
+}
