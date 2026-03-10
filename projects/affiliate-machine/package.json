@@ -2,6 +2,7 @@
   "name": "affiliate-machine",
   "version": "1.0.0",
   "description": "Fully autonomous agent systems for affiliate marketing at scale. $10K MRR target.",
+  "type": "module",
   "main": "index.js",
   "directories": {
     "lib": "lib"
