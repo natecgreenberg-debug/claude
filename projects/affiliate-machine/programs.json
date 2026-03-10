@@ -11,10 +11,9 @@
     "tier": 1,
     "priority_score": 95,
     "payment_reliability": "high",
-    "status": "blocked",
-    "notes": "Highest commission rate. All-in-one funnel/email/course platform. Has free plan — recommend as 'best free funnel builder'.",
-    "signup_notes": "Captcha on landing page",
-    "signup_attempted_at": "2026-03-10T03:53:55.829Z"
+    "status": "active",
+    "affiliate_link": "https://systeme.io/?sa=sa024254513373376fa2a167f3d85d4c75c0537d67",
+    "notes": "Highest commission rate. All-in-one funnel/email/course platform. Has free plan — recommend as 'best free funnel builder'."
   },
   {
     "name": "Snov.io",
@@ -365,5 +364,69 @@
     "payment_reliability": "high",
     "status": "not_applied",
     "notes": "$50 per activation + 20% first-year spend. High brand recognition."
+  },
+  {
+    "name": "GoHighLevel",
+    "commission_pct": 40,
+    "recurring": "lifetime",
+    "cookie_days": 30,
+    "plan_range": "$97-497/mo",
+    "category": "crm-funnel-builder",
+    "signup_url": "https://www.gohighlevel.com/",
+    "affiliate_link": "https://www.gohighlevel.com/?fp_ref=ncghl",
+    "difficulty": "moderate",
+    "tier": 1,
+    "priority_score": 92,
+    "payment_reliability": "high",
+    "status": "active",
+    "notes": "40% lifetime recurring. High-ticket $39-199/mo per referral. All-in-one CRM/funnel/email platform. Very popular with agencies."
+  },
+  {
+    "name": "Fliki",
+    "commission_pct": 30,
+    "recurring": "lifetime",
+    "cookie_days": -1,
+    "plan_range": "$28-88/mo",
+    "category": "ai-video",
+    "signup_url": "https://fliki.ai/",
+    "affiliate_link": "https://fliki.ai/?via=nathaniel-greenberg",
+    "difficulty": "easy",
+    "tier": 1,
+    "priority_score": 75,
+    "payment_reliability": "high",
+    "status": "active",
+    "notes": "AI video generator. 30% lifetime. Growing AI tools niche."
+  },
+  {
+    "name": "BasedLabs",
+    "commission_pct": 30,
+    "recurring": "recurring",
+    "cookie_days": -1,
+    "plan_range": "$12-60/mo",
+    "category": "ai-tools",
+    "signup_url": "https://www.basedlabs.ai/",
+    "affiliate_link": "https://www.basedlabs.ai/?via=nathaniel",
+    "difficulty": "easy",
+    "tier": 2,
+    "priority_score": 65,
+    "payment_reliability": "unknown",
+    "status": "active",
+    "notes": "AI image/video generation. 30% recurring."
+  },
+  {
+    "name": "MagAI",
+    "commission_pct": 20,
+    "recurring": "recurring",
+    "cookie_days": -1,
+    "plan_range": "$19-99/mo",
+    "category": "ai-tools",
+    "signup_url": "https://magai.co/",
+    "affiliate_link": "",
+    "difficulty": "easy",
+    "tier": 2,
+    "priority_score": 60,
+    "payment_reliability": "unknown",
+    "status": "active",
+    "notes": "AI chat aggregator. No affiliate link found yet — check dashboard."
   }
 ]
