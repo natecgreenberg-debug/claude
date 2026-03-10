@@ -25,3 +25,13 @@
 - **Task 6**: Trend Scan Multi-Account Tools — PASS — 2026-03-10
   - Deliverable: `research/deep-research/2026-03-10_trend-scan-multi-account-tools.md`
   - Market leaders compared, detection arms race documented
+
+## Group B — Completed
+- **Task 7**: Platform-Specific Playbooks — PASS — 2026-03-10
+  - Deliverable: `research/deep-research/2026-03-10_platform-specific-playbooks.md`
+  - 5 playbooks (Reddit, Medium, YouTube, Quora/LinkedIn, TikTok/Instagram)
+
+## Group C — Completed
+- **Task 8**: n8n Automation + Analytics + Risk — PASS — 2026-03-10
+  - Deliverable: `research/deep-research/2026-03-10_automation-analytics-risk.md`
+  - 5 n8n workflows, tracking tools, case studies, revenue timeline
