@@ -5,6 +5,7 @@
     "difficulty": "medium",
     "programs": ["GetResponse", "AWeber", "ConvertKit"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
     "status": "not_started"
   },
   {
@@ -13,6 +14,7 @@
     "difficulty": "medium",
     "programs": ["Systeme.io", "ClickFunnels"],
     "content_type": "versus",
+    "platform": ["medium", "blog", "youtube"],
     "status": "not_started"
   },
   {
@@ -21,6 +23,7 @@
     "difficulty": "low",
     "programs": ["Systeme.io", "ClickFunnels", "Leadpages"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube", "quora"],
     "status": "not_started"
   },
   {
@@ -29,6 +32,7 @@
     "difficulty": "medium",
     "programs": ["ConvertKit"],
     "content_type": "versus",
+    "platform": ["medium", "blog"],
     "status": "not_started"
   },
   {
@@ -37,6 +41,7 @@
     "difficulty": "medium",
     "programs": ["Mangools", "SEMrush"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
     "status": "not_started"
   },
   {
@@ -45,6 +50,7 @@
     "difficulty": "high",
     "programs": ["Kajabi", "Teachable"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
     "status": "not_started"
   },
   {
@@ -53,6 +59,7 @@
     "difficulty": "low",
     "programs": ["GetResponse"],
     "content_type": "review",
+    "platform": ["medium", "blog"],
     "status": "not_started"
   },
   {
@@ -61,6 +68,7 @@
     "difficulty": "medium",
     "programs": ["Systeme.io"],
     "content_type": "tutorial",
+    "platform": ["medium", "blog", "youtube", "quora"],
     "status": "not_started"
   },
   {
@@ -69,6 +77,7 @@
     "difficulty": "low",
     "programs": ["GetResponse", "AWeber", "ConvertKit"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "quora"],
     "status": "not_started"
   },
   {
@@ -77,6 +86,7 @@
     "difficulty": "low",
     "programs": ["Mangools", "SEMrush"],
     "content_type": "versus",
+    "platform": ["medium", "blog", "youtube"],
     "status": "not_started"
   },
   {
@@ -85,6 +95,7 @@
     "difficulty": "medium",
     "programs": ["Pabbly"],
     "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube", "quora", "reddit"],
     "status": "not_started"
   },
   {
@@ -93,6 +104,151 @@
     "difficulty": "low",
     "programs": ["Leadpages"],
     "content_type": "review",
+    "platform": ["medium", "blog"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "systeme.io review 2026",
+    "intent": "buyer",
+    "difficulty": "low",
+    "programs": ["Systeme.io"],
+    "content_type": "review",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best landing page builder 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["Leadpages", "Unbounce", "Webflow"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "webflow vs framer 2026",
+    "intent": "buyer",
+    "difficulty": "low",
+    "programs": ["Webflow", "Framer"],
+    "content_type": "versus",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best project management tool for small teams 2026",
+    "intent": "buyer",
+    "difficulty": "high",
+    "programs": ["Monday.com"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "linkedin"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "clickfunnels review 2026 is it worth it",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["ClickFunnels"],
+    "content_type": "review",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best AI tools for business 2026",
+    "intent": "buyer",
+    "difficulty": "high",
+    "programs": ["Answrr", "Snov.io"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube", "linkedin"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "snov.io review 2026 sales automation",
+    "intent": "buyer",
+    "difficulty": "low",
+    "programs": ["Snov.io"],
+    "content_type": "review",
+    "platform": ["medium", "blog"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best website builder for affiliate marketing 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["Webflow", "Framer", "Shopify"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "kajabi vs teachable for course creators 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["Kajabi", "Teachable"],
+    "content_type": "versus",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "pabbly vs zapier vs make comparison",
+    "intent": "buyer",
+    "difficulty": "low",
+    "programs": ["Pabbly"],
+    "content_type": "versus",
+    "platform": ["medium", "blog", "youtube", "reddit"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "how to start email marketing for free 2026",
+    "intent": "informational-buyer",
+    "difficulty": "medium",
+    "programs": ["GetResponse", "AWeber", "ConvertKit"],
+    "content_type": "tutorial",
+    "platform": ["medium", "blog", "youtube", "quora"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best live chat software for websites 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["Text/LiveChat"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "linkedin"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "notion vs monday for team collaboration",
+    "intent": "buyer",
+    "difficulty": "low",
+    "programs": ["Monday.com", "Notion"],
+    "content_type": "versus",
+    "platform": ["medium", "blog", "linkedin", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best affiliate tracking software 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["ClickMagick"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "best wordpress hosting 2026 fast secure",
+    "intent": "buyer",
+    "difficulty": "high",
+    "programs": ["Kinsta", "WP Engine"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "youtube"],
+    "status": "not_started"
+  },
+  {
+    "keyword": "hubspot alternatives for small business 2026",
+    "intent": "buyer",
+    "difficulty": "medium",
+    "programs": ["HubSpot", "GetResponse", "Snov.io"],
+    "content_type": "comparison",
+    "platform": ["medium", "blog", "linkedin"],
     "status": "not_started"
   }
 ]

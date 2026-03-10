@@ -1,29 +1,63 @@
-# n8n Workflows for Affiliate Machine
+# n8n Workflows for Recurring SaaS Affiliate Pipeline
 
-## Planned Workflows
+Self-hosted on VPS. All workflows are $0/mo.
 
-### 1. Content Scheduler
-- **Trigger**: Cron (daily at 9am EST)
-- **Logic**: Read content calendar -> check what's due -> send reminder via webhook/email
-- **Nodes**: Schedule Trigger -> Google Sheets -> IF (due today) -> Send notification
+## Workflow 1: Content Scheduling Pipeline
+- **Trigger**: Schedule Node (daily at 9am EST)
+- **Logic**: Read editorial calendar from Google Sheets → check what's due → generate platform-specific content variations via Claude API → route to platform APIs → log with timestamps
+- **Nodes**: Schedule Trigger → Google Sheets → Claude API → Split (LinkedIn/Medium/etc.) → Platform APIs → Google Sheets (log)
+- **Priority**: HIGH — deploy in Month 2
 
-### 2. Social Media Cross-Poster
-- **Trigger**: New blog post published (webhook or RSS)
-- **Logic**: Take blog post -> generate platform-specific versions -> schedule posts
-- **Platforms**: LinkedIn (API), Twitter/X (API)
+## Workflow 2: Link Rotation & Management
+- **Trigger**: New row in Google Sheets (new affiliate product added)
+- **Logic**: Generate Shlink shortened tracking URL → create social caption via Claude API → store tracking URL + metadata → alert via Telegram/email
+- **Nodes**: Google Sheets trigger → HTTP (Shlink API) → Claude API → Google Sheets → Notification
+- **Priority**: HIGH — deploy in Month 1
+
+## Workflow 3: Analytics Collection & Weekly Reporting
+- **Trigger**: Schedule Node (weekly, Sunday 8pm EST)
+- **Logic**: Pull traffic from Google Analytics API → YouTube stats → Reddit post performance → aggregate in Google Sheets → generate summary via Claude API → email report
+- **Nodes**: Schedule → GA4 API → YouTube API → Reddit API → Google Sheets → Claude API → Email
+- **Priority**: MEDIUM — deploy in Month 3
+
+## Workflow 4: Affiliate Program Monitoring
+- **Trigger**: Schedule Node (daily at 7am EST)
+- **Logic**: Check affiliate dashboard APIs → compare earnings vs previous day → log to Google Sheets → alert if significant changes
+- **Nodes**: Schedule → HTTP Request (dashboards) → IF (compare) → Google Sheets → Notification
+- **Priority**: LOW — deploy after first commissions
+
+## Workflow 5: Content Repurposing Pipeline
+- **Trigger**: Webhook (new blog post published)
+- **Logic**: Extract key points via Claude API → generate LinkedIn post, tweet thread, YouTube script outline, Reddit summary, Quora answer draft → store all variants in Google Sheets → queue for distribution
+- **Nodes**: Webhook → Claude API (5x for each format) → Google Sheets → Queue
+- **Priority**: MEDIUM — deploy in Month 3
 - **Note**: Reddit and Quora must stay manual (auto-posting = ban risk)
 
-### 3. Performance Tracker
-- **Trigger**: Weekly cron
-- **Logic**: Pull affiliate dashboard data -> log to Google Sheets -> send weekly summary
-- **Nodes**: HTTP Request (affiliate APIs) -> Google Sheets -> Email/webhook summary
+## Tracking Stack
 
-### 4. Content Repurposer
-- **Trigger**: Manual (after publishing a blog post)
-- **Logic**: Take blog URL -> Claude API generates: YouTube script, Quora answer drafts, tweet thread, LinkedIn post
-- **Output**: Google Doc or Sheet with all variants ready for manual review and posting
+| Tool | Purpose | Cost |
+|------|---------|------|
+| Shlink | Self-hosted URL shortener + click tracking | $0 |
+| Google Analytics 4 | Traffic + behavior analytics | $0 |
+| Google Sheets | Central metrics hub + editorial calendar | $0 |
+| UTM Parameters | Link attribution across all platforms | $0 |
 
-## How to Import
-1. Open n8n at http://localhost:5678
-2. Go to Workflows -> Import from File
-3. Select the .json file for the workflow you want
+## UTM Parameter Convention
+
+```
+utm_source = platform (reddit, medium, linkedin, youtube, tiktok, quora)
+utm_medium = content-type (article, video, comment, post, carousel, answer)
+utm_campaign = tool-name (systeme-io, getresponse, aweber, etc.)
+utm_content = specific-piece (review-2026, vs-clickfunnels, tutorial-funnels)
+```
+
+## How to Deploy
+1. n8n is already available on the VPS
+2. Open n8n at http://localhost:5678
+3. Create workflows following the designs above
+4. Connect Google Sheets, Claude API, and Shlink
+5. Set schedule triggers and test each workflow
+6. Monitor execution logs for errors
+
+## Research Reference
+See: `~/projects/Agent/research/deep-research/2026-03-10_automation-analytics-risk.md`
