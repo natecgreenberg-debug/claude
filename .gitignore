@@ -45,3 +45,8 @@ package-lock.json
 # Logs
 *.log
 logs/
+
+# Project-specific exclusions
+tools/firecrawl/
+business context/
+.claude/settings.local.json
