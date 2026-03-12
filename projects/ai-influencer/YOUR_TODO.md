@@ -1,162 +1,173 @@
 # Your Action Items — AI Influencer V1
+*Last updated: 2026-03-12 — reflects all decisions made in session*
 
-These are the things only YOU can do (signups, purchases, manual accounts, design decisions).
+These are the things only YOU can do. Everything conversational is done — persona, product, research, pillars, all code scaffolded. This list is purely external actions.
+
 **Ordered by time-sensitivity first, then by what unblocks the most downstream work.**
 
 ---
 
-## 🔴 MOST TIME-SENSITIVE — Do These Immediately
+## ✅ ALREADY DECIDED — No Action Needed
 
-The 14-day account warm-up is the critical path. Every day you delay starting it is a day later you go live.
+- **Persona name:** Kate Mercer
+- **Age / look:** 52–53, white woman, black hair going gray, warm/soft energy
+- **Product title:** "Everything I Wish I'd Known: Surviving Menopause Without Losing Your Mind"
+- **Price ladder:** $27 → $37 → $47
+- **Funnel:** Bio link → Gumroad product page (no website or domain for V1)
+- **Content pillars:** 6 locked (Testosterone, Brain Fog, Sleep, Weight, HRT, Emotional Side)
+- **Niche language:** "menopause" everywhere (not perimenopause)
 
-### [ ] 1. Decide the persona name
-**Blocks everything** — account handles, domain, Gumroad email, persona doc. Do this first, takes 5 minutes.
-Think: believable for a 47-year-old woman in the Pacific Northwest. Not too generic, not too unique.
-Suggestions: Dana, Claire, Lisa, Karen, Renee, Meredith.
-→ Tell me the name and I'll update persona.md and all downstream files.
+---
+
+## 🔴 MOST TIME-SENSITIVE — Do These First
+
+The 14-day account warm-up is the critical path. Every day you delay = a day later you go live.
+
+### [ ] 1. Create a Kate Mercer email address
+- Create `katemercer.health@gmail.com` (or closest available — don't use your personal email)
+- This will be used for all platform signups, Gumroad, GeeLark, etc.
+- Takes 5 minutes, unlocks everything else
+→ Do this before any other signup.
 
 ### [ ] 2. Sign up for GeeLark
 - Go to geelark.com → $29/mo plan
-- Create 3 cloud Android phone instances (one per platform)
-- **Do not create any social accounts yet** — proxies must be assigned first (#4)
-→ Let me know once you have instances ready.
+- Create 3 cloud Android phone instances (one per platform: TikTok, Instagram, YouTube)
+- **Do NOT create social accounts yet** — proxies must be assigned first
+→ Let me know once instances are created.
 
 ### [ ] 3. Buy residential proxies
 - Provider: IPRoyal (recommended) or Smartproxy
-- Get 3 residential sticky IPs — one per platform account
+- 3 residential sticky IPs — one per account
 - Cost: ~$30–45/mo
-- **Residential only — NOT datacenter** (platforms detect and ban datacenter IPs)
-- Must be assigned in GeeLark before accounts are created
-→ Share proxy credentials once purchased; I'll document the assignments.
+- **Residential only — NOT datacenter** (platforms detect and ban datacenter)
+- Must be assigned in GeeLark BEFORE creating any social accounts
+→ Share proxy credentials and I'll document the per-account assignments.
 
 ### [ ] 4. Buy 3 phone numbers from 5sim
 - Go to 5sim.net
-- Buy 3 US numbers for account verification (TikTok, Instagram, YouTube)
-- Cost: ~$0.05–0.15 each, one-time disposable
-→ Have these ready when you sit down to create accounts.
+- 3 US numbers for account verification (one per platform)
+- Cost: ~$0.05–0.15 each, one-time
+→ Have ready before sitting down to create accounts.
 
-### [ ] 5. ⚡ CREATE PLATFORM ACCOUNTS IN GEELARK — starts the 14-day clock
-**This is #1 by time-sensitivity. Every day this waits = a day later you go live.**
-For each GeeLark phone instance:
-- Assign proxy first (before touching any app)
-- Create one account per platform:
-  - TikTok: @[PersonaName]
-  - Instagram: @[PersonaName]
-  - YouTube: [PersonaName]
+### [ ] 5. ⚡ CREATE PLATFORM ACCOUNTS IN GEELARK
+**Most time-sensitive item. Starts the 14-day warmup clock.**
+For each GeeLark instance:
+- Assign proxy FIRST before opening any app
+- Create accounts:
+  - TikTok: @KateMercer
+  - Instagram: @KateMercer
+  - YouTube: Kate Mercer
 - Use 5sim numbers for phone verification
-- Profile bio: leave blank or "Coming soon..." for now
-- Open GeeLark support chat before starting — first-time setup can be tricky
-→ Once accounts exist, warmup begins automatically (just from the phone being active).
+- Bio: leave blank for now
+- Keep GeeLark support chat open — first setup can be tricky
+→ Once accounts exist, warmup clock starts.
 
 ### [ ] 6. Document credentials immediately after #5
 - Fill in `projects/ai-influencer/accounts/credentials.json`
-- Format is in `accounts/README.md`
-- Include: login, proxy assigned, phone number used, date created
-- **This file is gitignored — never committed**
-→ Do this the same session as account creation so nothing gets lost.
+- Format: see `accounts/README.md`
+- Include: login, proxy assigned, phone used, date created
+- **Gitignored — never committed**
+→ Do this same session as account creation.
 
 ---
 
-## 🟡 HIGH PRIORITY — Unblocks the Most Work
+## 🟡 HIGH PRIORITY — Unblocks the Most Build Work
 
 ### [ ] 7. Confirm OpenRouter API key is in .env
-Quick check — takes 30 seconds. Unblocks face generation AND script generation.
+30-second check. Unlocks face gen and script generation.
 ```bash
 cat /root/projects/Agent/.env | grep OPENROUTER
 ```
-→ If it's there, we're good. If not, add it now.
+→ If it's there, done. If not, add it.
 
 ### [ ] 8. Sign up for RunPod
-- Go to runpod.io → Add $20 credit
+- runpod.io → add $20 credit to start
 - No ongoing cost — only pay when pods are running
-- Unblocks the entire video pipeline (MuseTalk + Chatterbox)
+- Unlocks the full video pipeline (MuseTalk + Chatterbox)
 → Let me know once you have an account.
 
-### [ ] 9. Approve the persona face (Stage 1 → Stage 2)
-- I'll run Stage 1 first (cheap rough drafts, no cost confirmation needed)
-- You pick a direction (hair color, face shape, vibe)
-- Then I'll show you the Stage 2 cost (~$0.20–0.40) and wait for your go-ahead
-- You pick the final face — this becomes the reference image for all videos
-→ Unblocks video generation. We do this together in a session.
-
-### [ ] 10. Review and approve the product outline
-- I'll generate the full "Perimenopause Reset" outline
-- You review and steer the chapter angles
-- Then I write the chapters one at a time
-→ Unblocks PDF creation, which unblocks the Gumroad listing and the CTA on all videos.
-
-### [ ] 11. Sign up for Gumroad
-- Go to gumroad.com → free account
-- Use a new email (create `katemercer@gmail.com` or similar — not your personal email)
-- No credit card needed (10% fee on sales — switch to Gumroad at 5% if volume justifies it)
-- Gumroad hosts the product page — no domain or website needed for V1
-→ Let me know your Gumroad store URL once set up.
+### [ ] 9. Sign up for Gumroad
+- gumroad.com → free account
+- Use the Kate Mercer email from #1
+- No credit card needed (10% fee on sales)
+- Gumroad hosts the product page — that URL becomes Kate's bio link
+→ Share your Gumroad store URL.
 
 ---
 
-## 🟢 MEDIUM PRIORITY — Sequential Build Work
+## 🟢 WE DO THESE TOGETHER — Next Sessions
 
-### [ ] 13. Design the PDF in Canva (~1–2 hrs)
-- Requires: approved persona face (#9) + written content (I write this once outline is approved)
-- Use a health/wellness PDF template
-- Brand colors: warm tones (terracotta, sage green, off-white) — NOT clinical blue/white
-- Add persona face on cover
+These happen in order once you've completed the red + yellow items above.
+
+### [ ] 10. Run face generation — Stage 1 (cheap ideation)
+- I run `gen_face.py --stage 1` — rough drafts, low cost
+- You pick a direction
+- Then I run Stage 2 (quality lock-in) — est. ~$0.40–0.90 for 4–9 images (I'll confirm cost first)
+- You pick the final face → saved as persona reference image
+→ Unblocks all video generation.
+
+### [ ] 11. Review and approve product outline
+- I generate the full outline based on our research
+- You review and steer chapter angles
+- I write chapters one at a time, you approve each
+→ Unblocks PDF and Gumroad listing.
+
+### [ ] 12. Design the PDF in Canva (~1–2 hrs, you do this)
+- Requires: approved face (#10) + written content (#11)
+- Health/wellness template, warm color palette (terracotta, sage, off-white)
+- Add Kate's face on cover
 - Export as PDF
-→ I write all content; you handle the Canva layout.
+→ I write all content; you handle the layout.
 
-### [ ] 14. Set up Gumroad product listing (~20 min)
-- Requires: PDF ready (#13) + Gumroad account (#11)
-- Upload PDF → set price $27 → write description (I'll draft it)
-- Gumroad gives you a hosted product page URL — that's your bio link, done
-→ This is the end of the funnel; everything points here.
+### [ ] 13. Set up Gumroad product listing (~20 min)
+- Requires: PDF (#12) + Gumroad account (#9)
+- Upload PDF → $27 → product description (I draft it)
+- Gumroad product page URL = Kate's bio link on all platforms
+→ Funnel is live once this is done.
 
-### [ ] 15. Deploy MuseTalk on RunPod (we do together)
-- Requires: RunPod account (#8) + approved face (#9)
-- Reference: `infrastructure/runpod/museTalk_setup.md`
-- ~20 min setup, RTX 4090 spot instance
-→ I guide you through every command in a live session.
+### [ ] 14. Deploy MuseTalk + Chatterbox on RunPod (we do together)
+- Requires: RunPod account (#8)
+- Reference docs: `infrastructure/runpod/museTalk_setup.md` + `chatterbox_setup.md`
+- ~30–45 min total setup
+→ I walk you through every command live.
 
-### [ ] 16. Deploy Chatterbox TTS on RunPod (same session as #15)
-- Reference: `infrastructure/runpod/chatterbox_setup.md`
-→ Back-to-back with MuseTalk deployment.
-
-### [ ] 17. Add RunPod URLs to .env
-After both pods are running:
+### [ ] 15. Add RunPod URLs to .env
+After pods are running:
 ```
 RUNPOD_CHATTERBOX_URL=https://[pod-id]-8080.proxy.runpod.net
 RUNPOD_MUSSETALK_URL=https://[pod-id]-8081.proxy.runpod.net
 ```
-→ I'll run a test video immediately to verify the full pipeline.
+→ I run a test video immediately to verify pipeline end-to-end.
 
-### [ ] 18. Review and approve first video batch (~1–2 hrs)
+### [ ] 16. Review and approve first video batch (~1–2 hrs)
 - Open approval dashboard: `http://localhost:3030`
-- Keyboard: `A` to approve, `R` to reject
-- Target: approve 15–20 videos for the first posting wave
-→ Do this once the batch pipeline has run overnight.
+- `A` to approve, `R` to reject (keyboard shortcuts)
+- Target: approve 15–20 videos for first posting wave
+→ Do this after overnight batch generation run.
 
-### [ ] 19. Connect platform accounts in n8n (~30 min)
-- n8n already running on your VPS at port 5678
-- I'll build the posting workflow; you connect your platform credentials inside the n8n UI
-- (Blotato API or GeeLark RPA for actual posting)
-→ I build the automation; you authenticate the accounts.
+### [ ] 17. Connect platform accounts in n8n (~30 min)
+- n8n running on VPS at port 5678
+- I build the posting workflow; you connect account credentials in the n8n UI
+→ I build it, you authenticate.
 
 ---
 
-## ✅ GO LIVE CHECKLIST — Day 15 (14 days after #5)
+## ✅ GO LIVE CHECKLIST — Day 15
+*(14 days after completing #5)*
 
-### [ ] 20. Verify warmup is complete (no flags, no issues on any account)
-### [ ] 21. Add bio links on all 3 profiles → point to Gumroad product page
-### [ ] 22. Run a test purchase on Gumroad (verify checkout works end-to-end)
-### [ ] 23. Post first 5 videos manually → confirm they appear on all 3 platforms
-### [ ] 24. Confirm n8n auto-posting is active and scheduled
+- [ ] 18. Verify warmup complete — no flags, no issues on any account
+- [ ] 19. Add bio links on all 3 profiles → Gumroad product page URL
+- [ ] 20. Run a test purchase on Gumroad end-to-end
+- [ ] 21. Post first 5 videos manually → confirm live on all 3 platforms
+- [ ] 22. Confirm n8n auto-posting is active and on schedule
 
 ---
 
 ## Ongoing — Monthly
 
-### [ ] Switch to Stan Store when revenue hits $500/mo (replaces Gumroad)
-### [ ] Price increase: $27 → $37 at month 2 → $47 at month 3
-### [ ] Add lead magnet at month 2: free checklist → email opt-in → upsell to product
+- [ ] Switch to Stan Store when revenue hits $500/mo
+- [ ] Price increase: $27 → $37 at month 2 → $47 at month 3
+- [ ] Add lead magnet at month 2: free checklist → email opt-in → upsell
 
 ---
 
@@ -175,9 +186,5 @@ RUNPOD_MUSSETALK_URL=https://[pod-id]-8081.proxy.runpod.net
 | Item | Cost |
 |------|------|
 | 5sim phone numbers (3x) | ~$0.45 |
-| Domain | $0–$12/yr |
 | RunPod initial credit | $20 |
-
----
-
-*Last updated: 2026-03-12*
+| **Total** | **~$20.45** |
