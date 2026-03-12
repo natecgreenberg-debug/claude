@@ -10,7 +10,7 @@ These are the things only YOU can do (signups, purchases, manual accounts, desig
 The 14-day account warm-up is the critical path. Every day you delay starting it is a day later you go live.
 
 ### [ ] 1. Decide the persona name
-**Blocks everything** — account handles, domain, Payhip email, persona doc. Do this first, takes 5 minutes.
+**Blocks everything** — account handles, domain, Gumroad email, persona doc. Do this first, takes 5 minutes.
 Think: believable for a 47-year-old woman in the Pacific Northwest. Not too generic, not too unique.
 Suggestions: Dana, Claire, Lisa, Karen, Renee, Meredith.
 → Tell me the name and I'll update persona.md and all downstream files.
@@ -83,18 +83,14 @@ cat /root/projects/Agent/.env | grep OPENROUTER
 - I'll generate the full "Perimenopause Reset" outline
 - You review and steer the chapter angles
 - Then I write the chapters one at a time
-→ Unblocks PDF creation, which unblocks the Payhip listing and the CTA on all videos.
+→ Unblocks PDF creation, which unblocks the Gumroad listing and the CTA on all videos.
 
-### [ ] 11. Claim your domain
-- Free or cheap (~$1 on Namecheap): `[firstnamelastname].com` or `perimomentor.com`
-- You'll use subdomains per influencer: `perimenopause.[yourdomain].com`
-→ Let me know the domain; I'll set up the landing page and DNS config.
-
-### [ ] 12. Sign up for Payhip
-- Go to payhip.com → free account
-- Use a new email (create `[personaname]@gmail.com` or similar — not your personal email)
-- No credit card needed (5% fee on sales)
-→ Let me know your store URL once set up.
+### [ ] 11. Sign up for Gumroad
+- Go to gumroad.com → free account
+- Use a new email (create `katemercer@gmail.com` or similar — not your personal email)
+- No credit card needed (10% fee on sales — switch to Gumroad at 5% if volume justifies it)
+- Gumroad hosts the product page — no domain or website needed for V1
+→ Let me know your Gumroad store URL once set up.
 
 ---
 
@@ -108,9 +104,10 @@ cat /root/projects/Agent/.env | grep OPENROUTER
 - Export as PDF
 → I write all content; you handle the Canva layout.
 
-### [ ] 14. Set up Payhip product listing (~30 min)
-- Requires: PDF ready (#13) + Payhip account (#12) + domain (#11)
-- Upload PDF → set price $27 → write description (I'll draft it) → point domain
+### [ ] 14. Set up Gumroad product listing (~20 min)
+- Requires: PDF ready (#13) + Gumroad account (#11)
+- Upload PDF → set price $27 → write description (I'll draft it)
+- Gumroad gives you a hosted product page URL — that's your bio link, done
 → This is the end of the funnel; everything points here.
 
 ### [ ] 15. Deploy MuseTalk on RunPod (we do together)
@@ -148,8 +145,8 @@ RUNPOD_MUSSETALK_URL=https://[pod-id]-8081.proxy.runpod.net
 ## ✅ GO LIVE CHECKLIST — Day 15 (14 days after #5)
 
 ### [ ] 20. Verify warmup is complete (no flags, no issues on any account)
-### [ ] 21. Add bio links on all 3 profiles → point to Payhip product page
-### [ ] 22. Run a test purchase on Payhip (verify checkout works end-to-end)
+### [ ] 21. Add bio links on all 3 profiles → point to Gumroad product page
+### [ ] 22. Run a test purchase on Gumroad (verify checkout works end-to-end)
 ### [ ] 23. Post first 5 videos manually → confirm they appear on all 3 platforms
 ### [ ] 24. Confirm n8n auto-posting is active and scheduled
 
@@ -157,7 +154,7 @@ RUNPOD_MUSSETALK_URL=https://[pod-id]-8081.proxy.runpod.net
 
 ## Ongoing — Monthly
 
-### [ ] Switch to Stan Store when revenue hits $500/mo (replaces Payhip)
+### [ ] Switch to Stan Store when revenue hits $500/mo (replaces Gumroad)
 ### [ ] Price increase: $27 → $37 at month 2 → $47 at month 3
 ### [ ] Add lead magnet at month 2: free checklist → email opt-in → upsell to product
 
