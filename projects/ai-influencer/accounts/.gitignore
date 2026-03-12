@@ -1,0 +1,4 @@
+# Never commit account credentials
+*
+!.gitignore
+!README.md

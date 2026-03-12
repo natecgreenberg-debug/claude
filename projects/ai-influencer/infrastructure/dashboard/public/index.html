@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Approval Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; }
+
+    .header { background: #1a1a1a; padding: 16px 24px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .stats { display: flex; gap: 20px; }
+    .stat { text-align: center; }
+    .stat .number { font-size: 22px; font-weight: 700; }
+    .stat .label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat.pending .number { color: #f0a500; }
+    .stat.approved .number { color: #4caf50; }
+    .stat.rejected .number { color: #f44336; }
+
+    .main { display: flex; gap: 24px; padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+    .video-panel { flex: 1; }
+    .video-container { background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 9/16; max-height: 70vh; display: flex; align-items: center; justify-content: center; }
+    video { width: 100%; height: 100%; object-fit: contain; }
+    .empty-state { text-align: center; color: #555; padding: 48px; }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 16px; }
+
+    .control-panel { width: 360px; display: flex; flex-direction: column; gap: 16px; }
+
+    .card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; }
+    .card h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 12px; }
+
+    .script-text { font-size: 14px; line-height: 1.6; color: #ccc; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+
+    .filename { font-size: 12px; color: #555; font-family: monospace; word-break: break-all; }
+
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-approve { background: #4caf50; color: white; }
+    .btn-reject { background: #f44336; color: white; }
+
+    .reject-note { width: 100%; background: #111; border: 1px solid #444; border-radius: 6px; color: #ccc; padding: 8px 10px; font-size: 13px; resize: vertical; min-height: 60px; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Video Approval Dashboard</h1>
+  <div class="stats">
+    <div class="stat pending"><div class="number" id="count-pending">—</div><div class="label">Pending</div></div>
+    <div class="stat approved"><div class="number" id="count-approved">—</div><div class="label">Approved</div></div>
+    <div class="stat rejected"><div class="number" id="count-rejected">—</div><div class="label">Rejected</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="video-panel">
+    <div class="video-container" id="video-container">
+      <div class="empty-state">
+        <div class="icon">🎬</div>
+        <p>No videos pending approval</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="card">
+      <h2>Script</h2>
+      <div class="script-text" id="script-text">—</div>
+    </div>
+
+    <div class="card">
+      <h2>File</h2>
+      <div class="filename" id="filename">—</div>
+    </div>
+
+    <div class="card">
+      <h2>Actions</h2>
+      <div class="actions">
+        <button class="btn btn-approve" id="btn-approve" disabled onclick="approve()">✓ Approve</button>
+        <textarea class="reject-note" id="reject-note" placeholder="Rejection reason (optional)..." rows="2"></textarea>
+        <button class="btn btn-reject" id="btn-reject" disabled onclick="reject()">✗ Reject</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentFilename = null;
+
+  async function loadQueue() {
+    const res = await fetch('/api/queue');
+    const data = await res.json();
+
+    document.getElementById('count-pending').textContent = data.counts.pending;
+    document.getElementById('count-approved').textContent = data.counts.approved;
+    document.getElementById('count-rejected').textContent = data.counts.rejected;
+
+    if (data.next) {
+      currentFilename = data.next.filename;
+      document.getElementById('filename').textContent = data.next.filename;
+      document.getElementById('script-text').textContent = data.next.script || '(no script)';
+
+      const container = document.getElementById('video-container');
+      container.innerHTML = `<video controls autoplay muted src="${data.next.url}"></video>`;
+
+      document.getElementById('btn-approve').disabled = false;
+      document.getElementById('btn-reject').disabled = false;
+    } else {
+      currentFilename = null;
+      document.getElementById('filename').textContent = '—';
+      document.getElementById('script-text').textContent = '—';
+      document.getElementById('video-container').innerHTML = `
+        <div class="empty-state">
+          <div class="icon">✓</div>
+          <p>Queue empty — all done!</p>
+        </div>`;
+      document.getElementById('btn-approve').disabled = true;
+      document.getElementById('btn-reject').disabled = true;
+    }
+  }
+
+  async function approve() {
+    if (!currentFilename) return;
+    await fetch('/api/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: currentFilename }),
+    });
+    showToast('✓ Approved');
+    document.getElementById('reject-note').value = '';
+    loadQueue();
+  }
+
+  async function reject() {
+    if (!currentFilename) return;
+    const note = document.getElementById('reject-note').value;
+    await fetch('/api/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: currentFilename, note }),
+    });
+    showToast('✗ Rejected');
+    document.getElementById('reject-note').value = '';
+    loadQueue();
+  }
+
+  function showToast(message) {
+    const t = document.getElementById('toast');
+    t.textContent = message;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'a' || e.key === 'A') approve();
+    if (e.key === 'r' || e.key === 'R') reject();
+  });
+
+  // Initial load + poll every 10s
+  loadQueue();
+  setInterval(loadQueue, 10000);
+</script>
+
+</body>
+</html>

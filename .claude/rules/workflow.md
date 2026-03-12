@@ -38,6 +38,9 @@ Every task follows this pattern. No exceptions.
 ## Background Work
 When Nate asks you to run something "in the background" or says he wants to keep chatting, wrap the **entire pipeline** — orchestration, sub-tasks, grading, committing — in a single top-level background agent. Don't just background the leaf-node agents while keeping the main thread busy orchestrating. The goal is to free up the conversation so Nate can talk to you about other things while the work runs.
 
+## Spending Rule
+**Always ask before spending money.** Before any paid API call (OpenRouter image generation, RunPod GPU, proxy purchase, phone number, etc.), show Nate the estimated cost and wait for explicit approval. Never auto-spend.
+
 ## Git Habits
 - Commit early, commit often
 - Always `git push` after committing — never leave unpushed commits
