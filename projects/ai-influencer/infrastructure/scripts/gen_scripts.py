@@ -33,7 +33,7 @@ SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Use cheap model for bulk script generation
 SCRIPT_MODEL = "anthropic/claude-haiku-4-5"
-COST_PER_SCRIPT = 0.002  # rough upper bound
+COST_PER_SCRIPT = 0.02  # high-end estimate per script (~500 in / 500 out tokens)
 
 PERSONA_CONTEXT = """
 You are writing video scripts for an AI influencer named [NAME], a woman in her late 40s

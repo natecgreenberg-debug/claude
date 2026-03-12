@@ -43,11 +43,13 @@ NOT: heavily filtered, Instagram-perfected, or obviously AI-generated looking.
 """.strip()
 
 # Model configs
-STAGE_1_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"  # free tier on some providers
-STAGE_2_MODEL = "google/gemini-2.0-flash-exp:free"  # adjust to actual image model ID
+STAGE_1_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"  # cheap ideation
+# NOTE: gemini-2.0-flash-exp:free is TEXT ONLY — cannot generate images
+# For image generation via Google, use the Gemini image preview model below
+STAGE_2_MODEL = "google/gemini-2.5-flash-preview"  # actual image gen model — verify ID at openrouter.ai/collections/image-models
 
-# Approximate costs (USD) — update if pricing changes
-STAGE_2_COST_PER_IMAGE = 0.04  # rough estimate for Gemini image gen via OpenRouter
+# Approximate costs (USD) — erring HIGH, verify at openrouter.ai before each session
+STAGE_2_COST_PER_IMAGE = 0.10  # high-end estimate per image — actual may be lower
 
 
 def confirm_spend(estimated_cost: float) -> bool:
