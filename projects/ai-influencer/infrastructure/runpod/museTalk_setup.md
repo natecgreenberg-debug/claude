@@ -1,9 +1,11 @@
-# MuseTalk 1.5 — RunPod Setup Guide
+# MuseTalk 1.5 — RunPod Setup Guide (Bulk Fallback)
 
 ## What It Does
 MuseTalk 1.5 generates a talking head video from:
 - Input: reference face image + audio file
 - Output: video of the face speaking the audio with realistic lip sync
+
+**Role in the pipeline:** Bulk/cheap fallback. Use InfiniteTalk (`infiniteTalk_setup.md`) as the primary model for quality output. Use MuseTalk when generating large volumes at lowest cost (e.g. 100+ videos overnight) where per-video savings outweigh the quality gap.
 
 ## RunPod Setup
 

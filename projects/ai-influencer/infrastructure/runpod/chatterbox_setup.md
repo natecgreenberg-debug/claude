@@ -66,7 +66,7 @@ Then use `voice_id: "persona_v1"` in all synthesis calls.
 Returns: audio/wav binary
 ```
 
-## Voice Guidelines for Perimenopause Persona
+## Voice Guidelines for Menopause Persona
 - **Speed**: 0.95 (slightly slower — warm, not rushed)
 - **Pitch**: 0 (natural)
 - **Emotion**: warm
