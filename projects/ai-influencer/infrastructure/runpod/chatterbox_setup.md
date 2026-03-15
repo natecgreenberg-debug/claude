@@ -6,6 +6,12 @@ Chatterbox is a self-hosted TTS (text-to-speech) model that converts script text
 - Output: .wav audio file
 - Key feature: zero-shot voice cloning (can match a reference voice)
 
+## Deployment Strategy: Pods Now → Serverless Later
+
+We're using **RunPod Pods** during the validation phase. Pods let us SSH in, install models interactively, and debug freely — essential while we're proving the pipeline works.
+
+Once the pipeline is validated and containerized, we'll likely migrate to **RunPod Serverless**. Serverless scales to zero at idle (no cost between batch runs), exposes a persistent API endpoint, and fits cleanly into automated n8n workflows. The trade-off is higher setup complexity upfront — so we're deferring it to Wave 2.
+
 ## RunPod Setup
 
 ### 1. Select GPU
