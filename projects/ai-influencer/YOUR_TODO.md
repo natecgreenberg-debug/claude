@@ -24,18 +24,14 @@ These are the things only YOU can do. Everything conversational is done — pers
 ## Your Wave 1 Signups (just 2 items)
 
 ### [ ] 1. Sign up for RunPod (your own account)
-- runpod.io → add $20 credit to start
+- runpod.io → add $5–10 credit to start (no minimum — at $0.34/hr for a 4090, $5 gives ~15 hrs)
 - Use your own identity (not Kate's — this is backend infrastructure)
 - No ongoing cost — pay only when pods are running (~$0.34/hr on-demand for RTX 4090)
 - **On-demand vs spot:** On-demand = spin up, use it, shut down, pay only for seconds used. Always available. That's what we want. Spot is cheaper but can be interrupted mid-run — fine for overnight batch jobs later, not for setup.
 → Let me know once you have an account and I'll walk you through deployment.
 
-### [ ] 2. Confirm OpenRouter API key is in .env
-30-second check. Unlocks face gen and script generation.
-```bash
-cat /root/projects/Agent/.env | grep OPENROUTER
-```
-→ If it's there, done. If not, add it from openrouter.ai/keys.
+### [x] 2. Confirm OpenRouter API key is in .env
+✅ Done — key confirmed in `.env`.
 
 ---
 
@@ -180,7 +176,7 @@ For each GeeLark instance:
 **Wave 1 only (validation phase):**
 | Item | Cost |
 |------|------|
-| RunPod initial credit | $20 |
+| RunPod initial credit | $5–10 |
 | OpenRouter (face gen Stage 1+2) | ~$1–2 |
 | **Total** | **~$21–22** |
 
