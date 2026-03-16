@@ -8,35 +8,40 @@ InfiniteTalk (MeiGen-AI, August 2025) generates unlimited-length talking head vi
 
 **This is the primary lip-sync model.** Use MuseTalk 1.5 only for large cheap batch jobs where cost matters more than quality.
 
-## Deployment: RunPod Serverless (pre-built template)
+## Deployment: RunPod Pods with Template (not serverless)
 
-We're using **RunPod Serverless** via a pre-built community template — no SSH, no manual model installation.
+We use **pods** instead of serverless — 3× cheaper ($0.34/hr RTX 4090 vs $1.12/hr serverless).
+The `run_batch.py` script starts and stops pods automatically via the RunPod API.
 
-**Template repo**: [github.com/wlsdml1114/Infinitetalk_Runpod_hub](https://github.com/wlsdml1114/Infinitetalk_Runpod_hub)
+**Docker image**: `wlsdml1114/Infinitetalk_Runpod_hub`
 
-Deploy by pointing RunPod Serverless → New Endpoint at this GitHub repo. RunPod builds the Docker image automatically. Scales to zero at idle — you only pay per generation. Fits cleanly into the automated n8n pipeline in Wave 2 with no changes.
+## One-Time Pod Template Setup (you do this once in RunPod console)
 
-## RunPod Setup
+### Step 1: Create Network Volume (if not already done)
+- RunPod console → Storage → New Volume
+- Name: `ai-influencer-weights`, Size: 50 GB
+- Note the **Volume ID** — add to `.env` as `RUNPOD_NETWORK_VOLUME_ID`
 
-### 1. Select GPU
-- **Recommended**: RTX 4090 (24GB) on-demand at ~$0.34/hr
-- **Minimum**: Any GPU with 6GB+ VRAM (supports int8 quantization)
-- Use **on-demand** for interactive setup and test runs
-- Switch to **spot** ($0.20/hr) for large overnight batch jobs once the pipeline is proven
+### Step 2: Launch a setup pod
+- RunPod console → Pods → Deploy Pod
+- **GPU**: RTX 4090 (required — 24GB VRAM)
+- **Docker image**: `wlsdml1114/Infinitetalk_Runpod_hub`
+- **Volume**: Mount `ai-influencer-weights` at `/workspace`
+- **Ports**: Expose TCP port `8081`
+- Use **on-demand** (not spot) for setup — spot can be interrupted mid-download
 
-### 2. Deploy InfiniteTalk Pod
+### Step 3: Download weights and start API
+Open the pod terminal (RunPod console → Connect → Start Terminal):
 
 ```bash
-# In RunPod pod terminal:
-git clone https://github.com/MeiGen-AI/InfiniteTalk.git
-cd InfiniteTalk
-pip install -r requirements.txt
+# Download model weights to the persistent volume
+mkdir -p /workspace/infinitetalk/weights
+cd /workspace/infinitetalk
+python download_weights.py --output /workspace/infinitetalk/weights
 
-# Download model weights
-python download_weights.py
-
-# Start API server
+# Verify API starts cleanly
 python api_server.py --port 8081 --host 0.0.0.0
+# Hit Ctrl+C once you see it's running — weights are now cached on the volume
 ```
 
 **Low-VRAM option (int8 quantization, runs on 6GB):**
@@ -44,9 +49,23 @@ python api_server.py --port 8081 --host 0.0.0.0
 python api_server.py --port 8081 --host 0.0.0.0 --quantize int8
 ```
 
-### 3. Get Your Endpoint URL
+### Step 4: Save as a template
+- RunPod console → Pods → three-dot menu on this pod → **Save as Template**
+- Template name: `infinitetalk-v1`
+- Note the **Template ID** — add to `.env` as `RUNPOD_LIPSYNC_TEMPLATE_ID`
+- Stop (don't terminate) the setup pod — or terminate it to stop billing
+
+### Step 5: Add to .env
+```
+RUNPOD_API_KEY=rpa_...
+RUNPOD_LIPSYNC_TEMPLATE_ID=<template-id-from-step-4>
+RUNPOD_NETWORK_VOLUME_ID=<volume-id-from-step-1>
+```
+
+### How the URL is set at runtime
 - Format: `https://[POD_ID]-8081.proxy.runpod.net`
-- Add to `.env`: `RUNPOD_INFINITETALK_URL=https://[POD_ID]-8081.proxy.runpod.net`
+- `pod_manager.py` constructs this URL automatically and passes it to `generate_video.py` via env
+- You do NOT manually set `RUNPOD_INFINITETALK_URL` in `.env` — it's injected at runtime
 
 ## API Reference
 

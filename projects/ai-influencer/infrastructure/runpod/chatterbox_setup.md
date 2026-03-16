@@ -6,43 +6,62 @@ Chatterbox is a self-hosted TTS (text-to-speech) model that converts script text
 - Output: .wav audio file
 - Key feature: zero-shot voice cloning (can match a reference voice)
 
-## Deployment: RunPod Serverless (official Docker image)
+## Deployment: RunPod Pods with Template (not serverless)
 
-Use RunPod's own maintained Docker image — more reliable than community templates.
+We use **pods** instead of serverless — 3× cheaper ($0.22/hr T4 vs ~$0.67/hr serverless).
+The `run_batch.py` script starts and stops pods automatically via the RunPod API.
 
 **Docker image**: `runpodinc/chatterbox-turbo`
-
-Deploy via: RunPod console → Serverless → New Endpoint → Deploy from Docker registry → `runpodinc/chatterbox-turbo`
 
 **Role:** Production voice only. Chatterbox is used for Kate's cloned voice — the specific persona voice that requires a 5-second reference sample. Cold start is 3–4 min, which is acceptable for batch runs (only affects the first job in a session).
 
 **For fast preview/iteration:** Use Kokoro instead (see `kokoro_setup.md`) — <5 sec cold start, no cloning, but good enough to hear whether a script works before committing to a full Chatterbox render.
 
-## RunPod Setup
+## One-Time Pod Template Setup (you do this once in RunPod console)
 
-### 1. Select GPU
-- **Recommended**: RTX 3080 or T4 (Chatterbox is lighter than MuseTalk)
-- Cost: ~$0.20–0.30/hr
-- Can share a pod with MuseTalk if VRAM permits (not recommended for quality)
+### Step 1: Create Network Volume (if not already done)
+- RunPod console → Storage → New Volume
+- Name: `ai-influencer-weights`, Size: 50 GB
+- Note the **Volume ID** — add to `.env` as `RUNPOD_NETWORK_VOLUME_ID`
 
-### 2. Deploy Chatterbox Pod
+### Step 2: Launch a setup pod
+- RunPod console → Pods → Deploy Pod
+- **GPU**: RTX 3080 or T4
+- **Docker image**: `runpodinc/chatterbox-turbo`
+- **Volume**: Mount `ai-influencer-weights` at `/workspace`
+- **Ports**: Expose TCP port `8080`
+
+### Step 3: Download weights and start API
+Open the pod terminal (RunPod console → Connect → Start Terminal):
 
 ```bash
-# In RunPod pod terminal:
-git clone https://github.com/resemble-ai/chatterbox.git
-cd chatterbox
-pip install -r requirements.txt
+# Download model weights to the persistent volume
+mkdir -p /workspace/chatterbox/weights
+cd /workspace/chatterbox
+python -c "from chatterbox.tts import ChatterboxTTS; ChatterboxTTS.from_pretrained(device='cuda')"
 
-# Download model weights
-python download_models.py
-
-# Start API server
+# Verify API starts cleanly
 python api_server.py --port 8080 --host 0.0.0.0
+# Hit Ctrl+C once you see it's running — weights are now cached on the volume
 ```
 
-### 3. Get Your Endpoint URL
+### Step 4: Save as a template
+- RunPod console → Pods → three-dot menu on this pod → **Save as Template**
+- Template name: `chatterbox-v1`
+- Note the **Template ID** — add to `.env` as `RUNPOD_TTS_TEMPLATE_ID`
+- Stop (don't terminate) the setup pod — or terminate it to stop billing
+
+### Step 5: Add to .env
+```
+RUNPOD_API_KEY=rpa_...
+RUNPOD_TTS_TEMPLATE_ID=<template-id-from-step-4>
+RUNPOD_NETWORK_VOLUME_ID=<volume-id-from-step-1>
+```
+
+### 3. How the URL is set at runtime
 - Format: `https://[POD_ID]-8080.proxy.runpod.net`
-- Add to `.env`: `RUNPOD_CHATTERBOX_URL=https://[POD_ID]-8080.proxy.runpod.net`
+- `pod_manager.py` constructs this URL automatically and passes it to `generate_video.py` via env
+- You do NOT manually set `RUNPOD_CHATTERBOX_URL` in `.env` — it's injected at runtime
 
 ## Voice Setup
 

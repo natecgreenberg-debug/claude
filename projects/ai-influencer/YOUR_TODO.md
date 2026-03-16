@@ -44,20 +44,41 @@ These happen in order once you've completed the two items above.
 - We review findings together and decide the final model stack before deploying anything
 → Unblocks RunPod deployment.
 
-### [ ] 4. Deploy Chatterbox + InfiniteTalk as RunPod Serverless endpoints (~15 min)
-- No SSH or manual setup needed — pre-built community templates exist
-- RunPod console → Serverless → New Endpoint → point at GitHub repo
-- **Chatterbox**: github.com/geronimi73/runpod_chatterbox
-- **InfiniteTalk**: github.com/wlsdml1114/Infinitetalk_Runpod_hub
-- RunPod builds the Docker image automatically, scales to zero at idle
-→ I walk you through the console steps. Takes ~10-15 min per endpoint to build.
+### [ ] 4. Deploy Chatterbox + InfiniteTalk as RunPod **pods** with saved templates
+We're using **pods** (not serverless) — 3× cheaper per compute hour ($0.34/hr vs $1.12/hr serverless). A lifecycle script handles start/stop automatically.
 
-### [ ] 5. Add RunPod endpoint URLs to .env
-After endpoints are live:
+**One-time RunPod console setup (you do this once):**
+
+**Step 1: Create a Network Volume**
+- RunPod console → Storage → New Volume
+- Name: `ai-influencer-weights`, Size: 50 GB
+- Note the **Volume ID** (looks like `vol_abc123`)
+
+**Step 2: Create Chatterbox pod template**
+- Start a pod: RTX 3080 or T4, Docker image `runpodinc/chatterbox-turbo`, mount your volume at `/workspace`
+- In the pod terminal: download weights to `/workspace/chatterbox/weights/`, start API on port 8080
+- Save as pod template named `chatterbox-v1`
+- Note the **Template ID**
+- See full steps: `infrastructure/runpod/chatterbox_setup.md`
+
+**Step 3: Create InfiniteTalk pod template**
+- Start a pod: RTX 4090, Docker image `wlsdml1114/Infinitetalk_Runpod_hub`, mount volume at `/workspace`
+- In the pod terminal: download weights to `/workspace/infinitetalk/weights/`, start API on port 8081
+- Save as pod template named `infinitetalk-v1`
+- Note the **Template ID**
+- See full steps: `infrastructure/runpod/infiniteTalk_setup.md`
+
+→ Once you have the Template IDs and Volume ID, share them with me.
+
+### [ ] 5. Add RunPod credentials to .env
+After pods are configured:
 ```
-RUNPOD_CHATTERBOX_URL=https://api.runpod.ai/v2/[endpoint-id]/run
-RUNPOD_INFINITETALK_URL=https://api.runpod.ai/v2/[endpoint-id]/run
+RUNPOD_API_KEY=rpa_...
+RUNPOD_TTS_TEMPLATE_ID=...          # Chatterbox pod template ID
+RUNPOD_LIPSYNC_TEMPLATE_ID=...      # InfiniteTalk pod template ID
+RUNPOD_NETWORK_VOLUME_ID=...        # 50GB volume ID (~$3.50/mo)
 ```
+The pipeline will auto-start pods when you run a batch and auto-stop when done.
 → I run a test video immediately to verify pipeline end-to-end.
 
 ### [ ] 6. Run face generation — Stage 1 (cheap ideation)
