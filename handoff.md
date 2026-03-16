@@ -1,48 +1,77 @@
 # Session Handoff
-**Generated**: 2026-03-16 04:45 EST
-**Previous session**: B4_musetalk-debug-image-gen-session.md
+**Generated**: 2026-03-16 18:30 EST
+**Context**: Post-compact handoff — session B5 (latentsync-fix-scripts-images)
 
-## STATUS: Lipsync test running RIGHT NOW
-- MuseTalk pod `8vhe8nnwn52ews` is RUNNING, downloading models
-- Background script `bcugl8wwy` polling health every 60s, will run `/generate` when ready
-- Kokoro pod `kqkhvnccq5v0g0` is STOPPED
-- **If lipsync succeeded**: `kate_lipsync.mp4` in `content/test-outputs/` and committed
+## ⚠️ BACKGROUND AGENT STILL RUNNING — READ THIS FIRST
 
-## Overnight Agent Summary (a11a18164411556a2)
-The overnight autonomous agent accomplished the following BEFORE being superseded:
-1. Built + pushed `ghcr.io/natecgreenberg-debug/musetalk-api:ruxir` (ruxir-ig repo base)
-2. Built + pushed new `latest` with `start.sh` — volume-aware: checks models exist, skips download if yes
-3. Created network volume `wi6q9jkzx4` (US-IL-1, 20GB, $1.40/month)
-4. Created pod `rqec04dssua20u` WITH volume mounted at `/app/models` — VERIFIED MuseTalk health passed (`models_loaded=true`, GPU 23.54GB)
-5. Updated `.env` with verified pod IDs
-6. But then kept creating MORE pods in a loop (deleted working pods, recreated without volume)
+Agent `ac5706a719512cb46` is running a LatentSync lipsync test. When it completes, **you will receive a task notification automatically**. When that notification arrives:
 
-## What Went Wrong Overnight
-- Overnight agent used `start_pods()` which starts BOTH Kokoro and MuseTalk — Kokoro kept getting created/running when not needed
-- Agent cycled through many pod IDs: `bxdta5q8zm9i7o` → `t67kbooi0jzc6s` → `rqec04dssua20u` → `8vhe8nnwn52ews` (current)
-- Current pod `8vhe8nnwn52ews` does NOT have the network volume mounted — downloading models to container disk
-- This means next cold start will re-download unless container disk persists on same machine
+1. Read the agent output — it will tell you if the test passed or failed
+2. If **success**: report results to Nate with honest post-mortem (file size, generation time, video quality notes)
+3. If **failure** (timeout or error): diagnose, report to Nate with what went wrong
+4. Either way: confirm the pod was stopped ($0 charges)
 
-## Critical Infrastructure State
-| Resource | ID | Status | Cost |
-|---|---|---|---|
-| musetalk pod | `8vhe8nnwn52ews` | RUNNING (downloading models) | $0.59/hr |
-| kokoro pod | `kqkhvnccq5v0g0` | STOPPED | $0.46/hr when running |
-| network volume | `wi6q9jkzx4` | US-IL-1, 20GB | $1.40/month |
-| OLD EUR-NO-1 volume | `imks7ndzmw` | DELETED | gone |
+The agent is running pod with image `ghcr.io/natecgreenberg-debug/latentsync-api:latest` (FIXED version), network volume `wi6q9jkzx4`.
 
-## Key Fix Needed (Next Session)
-The network volume `wi6q9jkzx4` in US-IL-1 is the right long-term solution but needs:
-- A pod specifically created in US-IL-1 with `networkVolumeId: wi6q9jkzx4` and `volumeMountPath: /app/models`
-- Once created with volume, models download once and persist forever
-- Current pod `8vhe8nnwn52ews` doesn't have the volume → models re-download every cold start
+---
 
-## Docker Images (all pushed to ghcr.io)
-- `musetalk-api:latest` — best image, has `start.sh` (volume-aware: skip download if models exist)
-- `musetalk-api:ruxir` — ruxir-ig base, starts uvicorn directly (models must be pre-present)
+## What Was Accomplished This Session
 
-## Quick Orientation
-- `content/test-outputs/` — kate_face.jpg, kate_car.png, kate_audio.wav, kate_preview.mp4, kate_car_preview.mp4
-- `infrastructure/pipeline/musetalk_test.py` — test script that polls health + runs /generate + stops pod
-- `.env` — has pod IDs and URLs (may be stale if overnight agent updated again)
-- Network volume `wi6q9jkzx4` — 20GB US-IL-1, the correct long-term fix for cold-start problem
+1. **LatentSync Docker image fixed** — old `start.sh` downloaded models BEFORE starting uvicorn (caused 48+ min of 404s). Fixed: uvicorn starts immediately, models download in background. Rebuilt + pushed to GHCR.
+
+2. **60 Kate Mercer scripts** — written + enriched with deep menopause research. Saved at `projects/ai-influencer/content/scripts/kate_scripts.md`. Includes Reddit community language, specific data points, and 5 full script replacements for high-engagement gaps (creatine, ADHD unmasking, weird symptoms, elinzanetant, GSM).
+
+3. **4 Kate face images generated** (v3-v6) — `projects/ai-influencer/content/test-outputs/`. Nate selected **v4 (kitchen, black tee)** as canonical face. Agent recommends v3 (headshot) as backup.
+
+4. **Image prompting research** — `research/2026-03-16_ai-influencer-image-prompting.md`. Key: use photography language, repeat physical anchors every prompt, counter AI-doll effect explicitly.
+
+5. **Stale pods deleted** — 3 old EXITED pods cleaned up. Only the active test pod exists.
+
+6. **TTS confirmed**: edge-tts (local, free, `en-US-JennyNeural`) replaces Kokoro entirely. Kokoro pods deleted.
+
+---
+
+## Current RunPod State
+
+| Resource | ID | Status |
+|---|---|---|
+| LatentSync test pod | created by agent `ac5706a719512cb46` | RUNNING (being tested) |
+| Network volume | `wi6q9jkzx4` | US-IL-1, 20GB, $1.40/mo |
+| All other pods | — | DELETED |
+
+**IMPORTANT**: Agent will stop the test pod when done. If something went wrong and agent didn't stop it, stop it manually:
+```bash
+RUNPOD_KEY=$(grep RUNPOD_API_KEY /root/projects/Agent/.env | cut -d= -f2)
+curl -s -X POST "https://rest.runpod.io/v1/pods/{POD_ID}/stop" -H "Authorization: Bearer $RUNPOD_KEY"
+```
+
+---
+
+## Key Files
+
+- `projects/ai-influencer/content/scripts/kate_scripts.md` — 60 scripts (T-01→EM-10)
+- `projects/ai-influencer/content/test-outputs/kate_face_v4.png` — **canonical Kate face** (selected)
+- `projects/ai-influencer/content/test-outputs/kate_audio_v2.wav` — 20.5s menopause script audio
+- `projects/ai-influencer/content/test-outputs/kate_lipsync_v2.mp4` — will exist after agent completes
+- `/tmp/latentsync-api/` — Dockerfile, app.py, start.sh (fixed versions)
+- `research/2026-03-16_ai-talking-head-video-pipeline.md` — LatentSync vs MuseTalk research
+- `projects/ai-influencer/research/07_menopause_deep_research.md` — deep menopause content research (Reddit + Perplexity)
+
+---
+
+## Pending After Compact
+
+- [ ] Wait for LatentSync agent notification + report results to Nate
+- [ ] Once video confirmed working: next step is posting pipeline (TikTok/Instagram API)
+- [ ] Nate may want to regenerate canonical Kate face (v4) with a higher-quality model
+- [ ] No other background agents running
+
+---
+
+## Git State
+- Branch: `main`
+- Latest commits:
+  - `eea8c1c` feat: 4 kate face variants (v3-v6) + image prompting research
+  - `c8062d5` feat: enrich 60 kate scripts with menopause deep research + community language
+  - `4b60f19` feat: 60 kate mercer scripts + scriptwriting research
+  - `67dad30` research: AI talking head pipeline — LatentSync vs MuseTalk
