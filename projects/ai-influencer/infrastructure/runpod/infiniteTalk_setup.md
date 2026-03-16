@@ -8,11 +8,13 @@ InfiniteTalk (MeiGen-AI, August 2025) generates unlimited-length talking head vi
 
 **This is the primary lip-sync model.** Use MuseTalk 1.5 only for large cheap batch jobs where cost matters more than quality.
 
-## Deployment Strategy: Pods Now → Serverless Later
+## Deployment: RunPod Serverless (pre-built template)
 
-We're using **RunPod Pods** during the validation phase. Pods let us SSH in, install models interactively, and debug freely — essential while we're proving the pipeline works.
+We're using **RunPod Serverless** via a pre-built community template — no SSH, no manual model installation.
 
-Once the pipeline is validated and containerized, we'll likely migrate to **RunPod Serverless**. Serverless scales to zero at idle (no cost between batch runs), exposes a persistent API endpoint, and fits cleanly into automated n8n workflows. The trade-off is higher setup complexity upfront — so we're deferring it to Wave 2.
+**Template repo**: [github.com/wlsdml1114/Infinitetalk_Runpod_hub](https://github.com/wlsdml1114/Infinitetalk_Runpod_hub)
+
+Deploy by pointing RunPod Serverless → New Endpoint at this GitHub repo. RunPod builds the Docker image automatically. Scales to zero at idle — you only pay per generation. Fits cleanly into the automated n8n pipeline in Wave 2 with no changes.
 
 ## RunPod Setup
 

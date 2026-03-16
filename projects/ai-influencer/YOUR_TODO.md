@@ -44,17 +44,19 @@ These happen in order once you've completed the two items above.
 - We review findings together and decide the final model stack before deploying anything
 → Unblocks RunPod deployment.
 
-### [ ] 4. Deploy video pipeline on RunPod (we do together, ~30–45 min)
-- Requires: RunPod account (#1) + locked model stack (#3)
-- I walk you through every command live
-- GPU: RTX 4090 on-demand ($0.34/hr) — spin up for setup, shut down when done
-→ We confirm the pod is running before moving on.
+### [ ] 4. Deploy Chatterbox + InfiniteTalk as RunPod Serverless endpoints (~15 min)
+- No SSH or manual setup needed — pre-built community templates exist
+- RunPod console → Serverless → New Endpoint → point at GitHub repo
+- **Chatterbox**: github.com/geronimi73/runpod_chatterbox
+- **InfiniteTalk**: github.com/wlsdml1114/Infinitetalk_Runpod_hub
+- RunPod builds the Docker image automatically, scales to zero at idle
+→ I walk you through the console steps. Takes ~10-15 min per endpoint to build.
 
-### [ ] 5. Add RunPod URLs to .env
-After pods are running:
+### [ ] 5. Add RunPod endpoint URLs to .env
+After endpoints are live:
 ```
-RUNPOD_TTS_URL=https://[pod-id]-8080.proxy.runpod.net
-RUNPOD_LIPSYNC_URL=https://[pod-id]-8081.proxy.runpod.net
+RUNPOD_CHATTERBOX_URL=https://api.runpod.ai/v2/[endpoint-id]/run
+RUNPOD_INFINITETALK_URL=https://api.runpod.ai/v2/[endpoint-id]/run
 ```
 → I run a test video immediately to verify pipeline end-to-end.
 

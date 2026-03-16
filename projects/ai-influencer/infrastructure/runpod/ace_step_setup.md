@@ -13,11 +13,12 @@ ACE-Step 1.5 (January 2026, Apache 2.0) generates full songs and background musi
 - 50+ languages, 1000+ instruments/styles
 - REST API + Gradio UI included
 
-## Deployment Strategy: Pods Now → Serverless Later
+## Deployment: RunPod Serverless (manual, no pre-built template yet)
 
-We're using **RunPod Pods** during the validation phase. Pods let us SSH in, install models interactively, and debug freely — essential while we're proving the pipeline works.
+No dedicated RunPod community template exists for ACE-Step 1.5 yet. Two options:
 
-Once the pipeline is validated and containerized, we'll likely migrate to **RunPod Serverless**. Serverless scales to zero at idle (no cost between batch runs), exposes a persistent API endpoint, and fits cleanly into automated n8n workflows. The trade-off is higher setup complexity upfront — so we're deferring it to Wave 2.
+1. **Quick option**: Spin up a cheap pod (RTX 3090 spot, $0.11/hr), run the setup commands below, generate a full music library in one session, shut it down. At under 4GB VRAM and ~10 sec/song, the entire month's music takes under an hour.
+2. **Automated option**: Build a simple RunPod serverless worker ourselves when we're ready for Wave 2 automation. The model is lightweight enough that this is straightforward.
 
 ## RunPod Setup
 

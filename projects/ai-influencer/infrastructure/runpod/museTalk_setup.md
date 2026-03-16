@@ -7,11 +7,9 @@ MuseTalk 1.5 generates a talking head video from:
 
 **Role in the pipeline:** Bulk/cheap fallback. Use InfiniteTalk (`infiniteTalk_setup.md`) as the primary model for quality output. Use MuseTalk when generating large volumes at lowest cost (e.g. 100+ videos overnight) where per-video savings outweigh the quality gap.
 
-## Deployment Strategy: Pods Now → Serverless Later
+## Deployment: RunPod Pod (bulk fallback only)
 
-We're using **RunPod Pods** during the validation phase. Pods let us SSH in, install models interactively, and debug freely — essential while we're proving the pipeline works.
-
-Once the pipeline is validated and containerized, we'll likely migrate to **RunPod Serverless**. Serverless scales to zero at idle (no cost between batch runs), exposes a persistent API endpoint, and fits cleanly into automated n8n workflows. The trade-off is higher setup complexity upfront — so we're deferring it to Wave 2.
+MuseTalk is the cheap bulk fallback — use InfiniteTalk serverless for all normal runs. Only spin up a MuseTalk pod when generating very large batches (100+ videos) where per-video cost savings justify it over InfiniteTalk.
 
 ## RunPod Setup
 
