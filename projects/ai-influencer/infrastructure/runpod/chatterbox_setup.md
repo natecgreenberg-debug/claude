@@ -6,13 +6,17 @@ Chatterbox is a self-hosted TTS (text-to-speech) model that converts script text
 - Output: .wav audio file
 - Key feature: zero-shot voice cloning (can match a reference voice)
 
-## Deployment: RunPod Serverless (pre-built template)
+## Deployment: RunPod Serverless (official Docker image)
 
-We're using **RunPod Serverless** via a pre-built community template — no SSH, no manual model installation.
+Use RunPod's own maintained Docker image — more reliable than community templates.
 
-**Template repo**: [github.com/geronimi73/runpod_chatterbox](https://github.com/geronimi73/runpod_chatterbox)
+**Docker image**: `runpodinc/chatterbox-turbo`
 
-Deploy by pointing RunPod Serverless → New Endpoint at this GitHub repo. RunPod builds the Docker image automatically (~3–4 min init). Scales to zero at idle — you only pay per generation. Fits cleanly into the automated n8n pipeline in Wave 2 with no changes.
+Deploy via: RunPod console → Serverless → New Endpoint → Deploy from Docker registry → `runpodinc/chatterbox-turbo`
+
+**Role:** Production voice only. Chatterbox is used for Kate's cloned voice — the specific persona voice that requires a 5-second reference sample. Cold start is 3–4 min, which is acceptable for batch runs (only affects the first job in a session).
+
+**For fast preview/iteration:** Use Kokoro instead (see `kokoro_setup.md`) — <5 sec cold start, no cloning, but good enough to hear whether a script works before committing to a full Chatterbox render.
 
 ## RunPod Setup
 
