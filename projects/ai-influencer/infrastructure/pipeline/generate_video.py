@@ -6,30 +6,30 @@ Input:  script text + persona face image
 Output: final_video.mp4 (9:16, captioned, normalized audio)
 
 Pipeline:
-  Step 1: Chatterbox TTS → voiceover audio (.wav)
-  Step 2: InfiniteTalk (default) or MuseTalk 1.5 (bulk fallback) → talking head video (.mp4)
+  Step 1: Kokoro TTS → voiceover audio (.wav)
+  Step 2: MuseTalk lipsync → talking head video (.mp4)
   Step 3: FFmpeg → captions + 9:16 crop + audio normalization
 
-Model selection:
-  --lipsync-model infinitetalk  (default) — best quality, no length cap
-  --lipsync-model musetalk       — cheaper bulk option, lower quality
+Model stack:
+  TTS:     Kokoro FastAPI  (ghcr.io/remsky/kokoro-fastapi-gpu:latest, port 8880)
+           POST /v1/audio/speech  {"model": "kokoro", "input": text, "voice": "af_sarah", "response_format": "wav"}
+  Lipsync: MuseTalk API    (ghcr.io/natecgreenberg-debug/musetalk-api:latest, port 8000)
+           POST /generate  multipart: source (image), audio (wav)
 
 Prerequisites:
-  - RunPod instances running Chatterbox and InfiniteTalk (see runpod/ setup docs)
-  - RUNPOD_CHATTERBOX_URL and RUNPOD_INFINITETALK_URL in .env
-  - For bulk mode: RUNPOD_MUSETALK_URL in .env
+  - RunPod pods running Kokoro TTS and MuseTalk (see pod_manager.py)
+  - RUNPOD_KOKORO_URL and RUNPOD_MUSETALK_URL in .env
   - FFmpeg installed on VPS
 
 Usage:
   python generate_video.py --script path/to/script.md --face path/to/face.png
   python generate_video.py --script-text "Your script here" --face path/to/face.png
   python generate_video.py --batch path/to/scripts/dir/ --face path/to/face.png
-  python generate_video.py --batch path/to/scripts/dir/ --face path/to/face.png --lipsync-model musetalk
 
-Cost (RTX 4090 on-demand $0.34/hr):
-  InfiniteTalk: ~$0.011–0.028/video (2–5 min render)
-  MuseTalk:     ~$0.013–0.033/video (2–5 min render)
-  Batch of 30 with InfiniteTalk: ~$0.33–0.85
+Cost (RTX 3090/4090 on-demand):
+  Kokoro TTS:  ~$0.46/hr RTX 3090
+  MuseTalk:    ~$0.59/hr RTX 4090, ~3–5 min/video
+  Batch of 30: ~$1.50–3.00 depending on script length
 """
 
 import argparse
@@ -45,9 +45,15 @@ import httpx
 
 load_dotenv()
 
-RUNPOD_CHATTERBOX_URL = os.getenv("RUNPOD_CHATTERBOX_URL")      # https://[pod-id]-8080.proxy.runpod.net
-RUNPOD_INFINITETALK_URL = os.getenv("RUNPOD_INFINITETALK_URL")  # https://[pod-id]-8081.proxy.runpod.net
-RUNPOD_MUSETALK_URL = os.getenv("RUNPOD_MUSETALK_URL")          # https://[pod-id]-8082.proxy.runpod.net (bulk fallback)
+RUNPOD_KOKORO_URL = os.getenv("RUNPOD_KOKORO_URL")        # https://[pod-id]-8880.proxy.runpod.net
+RUNPOD_MUSETALK_URL = os.getenv("RUNPOD_MUSETALK_URL")    # https://[pod-id]-8000.proxy.runpod.net
+
+# Legacy env vars for backward compatibility
+RUNPOD_CHATTERBOX_URL = os.getenv("RUNPOD_CHATTERBOX_URL")
+RUNPOD_INFINITETALK_URL = os.getenv("RUNPOD_INFINITETALK_URL")
+
+# Kokoro TTS voice for Kate Mercer persona
+KOKORO_VOICE = "af_sarah"
 
 QUEUE_DIR = Path(__file__).parent.parent.parent / "content" / "videos" / "queue"
 PENDING_DIR = QUEUE_DIR / "pending"
@@ -76,17 +82,23 @@ def extract_script_text(script_path: Path) -> str:
 
 
 def generate_audio(script_text: str, output_path: Path) -> bool:
-    """Step 1: Send script to Chatterbox TTS, save audio file."""
-    if not RUNPOD_CHATTERBOX_URL:
-        print("ERROR: RUNPOD_CHATTERBOX_URL not set in .env")
-        print("  → Deploy Chatterbox on RunPod first (see runpod/chatterbox_setup.md)")
+    """Step 1: Send script to Kokoro TTS, save audio file as WAV."""
+    kokoro_url = RUNPOD_KOKORO_URL or RUNPOD_CHATTERBOX_URL
+    if not kokoro_url:
+        print("ERROR: RUNPOD_KOKORO_URL not set in .env")
+        print("  → Deploy Kokoro TTS on RunPod first (pod_manager.py --start-kokoro)")
         return False
 
-    print("  [1/3] Chatterbox TTS: generating audio...", end=" ", flush=True)
+    print("  [1/3] Kokoro TTS: generating audio...", end=" ", flush=True)
     try:
         response = httpx.post(
-            f"{RUNPOD_CHATTERBOX_URL}/synthesize",
-            json={"text": script_text, "voice": "default"},
+            f"{kokoro_url}/v1/audio/speech",
+            json={
+                "model": "kokoro",
+                "input": script_text,
+                "voice": KOKORO_VOICE,
+                "response_format": "wav",
+            },
             timeout=120.0,
         )
         response.raise_for_status()
@@ -102,38 +114,46 @@ def generate_talking_head(
     face_path: Path,
     audio_path: Path,
     output_path: Path,
-    model: str = "infinitetalk",
+    model: str = "musetalk",
 ) -> bool:
-    """Step 2: Send face image + audio to InfiniteTalk (default) or MuseTalk, get talking head video."""
-    if model == "infinitetalk":
-        url = RUNPOD_INFINITETALK_URL
-        env_var = "RUNPOD_INFINITETALK_URL"
-        setup_doc = "runpod/infiniteTalk_setup.md"
-        label = "InfiniteTalk"
-    else:
-        url = RUNPOD_MUSETALK_URL
-        env_var = "RUNPOD_MUSETALK_URL"
-        setup_doc = "runpod/museTalk_setup.md"
-        label = "MuseTalk"
+    """Step 2: Send face image + audio to MuseTalk lipsync, get talking head video.
 
+    MuseTalk API endpoint: POST /generate
+    Fields (multipart form):
+      source: source image or video file
+      audio:  driving audio file (WAV)
+    Response: JSON with download_url, or direct video stream.
+    """
+    url = RUNPOD_MUSETALK_URL or RUNPOD_INFINITETALK_URL
     if not url:
-        print(f"ERROR: {env_var} not set in .env")
-        print(f"  → Deploy {label} on RunPod first (see {setup_doc})")
+        print("ERROR: RUNPOD_MUSETALK_URL not set in .env")
+        print("  → Deploy MuseTalk on RunPod first (pod_manager.py --start-musetalk)")
         return False
 
-    print(f"  [2/3] {label}: generating talking head video...", end=" ", flush=True)
+    print(f"  [2/3] MuseTalk: generating talking head video...", end=" ", flush=True)
     try:
         with open(face_path, "rb") as f_img, open(audio_path, "rb") as f_audio:
             response = httpx.post(
                 f"{url}/generate",
                 files={
-                    "face": (face_path.name, f_img, "image/png"),
+                    "source": (face_path.name, f_img, "image/png"),
                     "audio": (audio_path.name, f_audio, "audio/wav"),
                 },
-                timeout=300.0,
+                timeout=600.0,  # MuseTalk can take up to 10 min for longer clips
             )
         response.raise_for_status()
-        output_path.write_bytes(response.content)
+
+        # MuseTalk returns JSON with download_url, then we fetch the video
+        result = response.json()
+        if "download_url" in result:
+            download_url = f"{url}{result['download_url']}"
+            video_response = httpx.get(download_url, timeout=120.0)
+            video_response.raise_for_status()
+            output_path.write_bytes(video_response.content)
+        else:
+            # Fallback: response body is the video directly
+            output_path.write_bytes(response.content)
+
         print(f"✓ {output_path.name}")
         return True
     except Exception as e:
@@ -206,7 +226,7 @@ def process_single(
     script_source: str | Path,
     face_path: Path,
     job_id: str,
-    lipsync_model: str = "infinitetalk",
+    lipsync_model: str = "musetalk",
 ) -> bool:
     """Run the full pipeline for one script."""
     if isinstance(script_source, Path):
@@ -241,14 +261,11 @@ def process_single(
 
 def confirm_batch(count: int, model: str) -> bool:
     """Confirm before batch GPU run."""
-    if model == "infinitetalk":
-        min_cost = count * 0.011
-        max_cost = count * 0.028
-        rate = "$0.34/hr RTX 4090 on-demand, 2–5 min/video"
-    else:
-        min_cost = count * 0.013
-        max_cost = count * 0.033
-        rate = "$0.34/hr RTX 4090 on-demand, 2–5 min/video"
+    # Kokoro TTS: $0.46/hr RTX 3090 + MuseTalk: $0.59/hr RTX 4090
+    # ~3–5 min/video combined = $0.052–0.087/video
+    min_cost = count * 0.052
+    max_cost = count * 0.087
+    rate = "Kokoro $0.46/hr RTX 3090 + MuseTalk $0.59/hr RTX 4090, ~3–5 min/video"
 
     print(f"\n{'='*50}")
     print(f"  SPEND CONFIRMATION REQUIRED")
@@ -270,9 +287,9 @@ def main() -> None:
     parser.add_argument("--face", type=Path, required=True, help="Path to persona face image (.png)")
     parser.add_argument(
         "--lipsync-model",
-        choices=["infinitetalk", "musetalk"],
-        default="infinitetalk",
-        help="Lip-sync model: infinitetalk (default, best quality) or musetalk (cheap bulk fallback)",
+        choices=["musetalk"],
+        default="musetalk",
+        help="Lip-sync model: musetalk (default)",
     )
     args = parser.parse_args()
 
