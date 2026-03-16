@@ -37,8 +37,8 @@ KOKORO_PORT = 8880    # Kokoro TTS FastAPI
 MUSETALK_PORT = 8000  # MuseTalk lipsync API
 
 # Pricing reference (SECURE cloud, on-demand)
-KOKORO_COST_HR = 0.46   # RTX 3090
-MUSETALK_COST_HR = 0.59  # RTX 4090
+KOKORO_COST_HR = 0.59   # RTX 4090 (US-IL-1)
+MUSETALK_COST_HR = 0.59  # RTX 4090 (US-IL-1)
 
 
 def _api_key() -> str:
